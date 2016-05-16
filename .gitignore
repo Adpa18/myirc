@@ -2,3 +2,6 @@
 .idea
 .idea/*
 CMakeLists.txt
+/server
+/client
+*~
