@@ -25,6 +25,7 @@ inline char *concat(const char *s1, const char *s2, const char *s3)
         memcpy(dest + len1, s2, len2);
     if (s3)
         memcpy(dest + len1 + len2, s3, len3 + 1);
+    dest[len1 + len2 + len3] = 0;
     return (dest);
 }
 

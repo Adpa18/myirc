@@ -12,6 +12,7 @@
 char    *genNick()
 {
     char    buffer[BUFF_SIZE];
+
     sprintf(buffer, "%d", rand() % 100000 + 10000);
     return (concat(NICK_PREFIX, buffer, 0));
 }
@@ -21,6 +22,7 @@ bool    new_client(SOCKET sock, fd_set *rdfs, Manager *manager)
     SOCKET      csock;
     SOCKADDR_IN csin;
     socklen_t   sinsize;
+    char        *buffer;
 
     sinsize = sizeof(csin);
     if ((csock = accept(sock, (SOCKADDR *)&csin, &sinsize)) == -1)
@@ -36,8 +38,11 @@ bool    new_client(SOCKET sock, fd_set *rdfs, Manager *manager)
     manager->max_fd = csock > manager->max_fd ? csock : manager->max_fd;
     manager->clients[manager->size].sock = csock;
     manager->clients[manager->size].username = genNick();
+    memset(manager->clients[manager->size].channel, 0, 200);
+    buffer = concat(WELCOME, manager->clients[manager->size].username, 0);
     ++manager->size;
-    write_socket(csock, WELCOME);
+    write_socket(csock, buffer);
+    free(buffer);
     return (true);
 }
 
@@ -60,10 +65,12 @@ void    listen_clients(fd_set *rdfs, Manager *manager)
         if ((buffer = read_socket(manager->clients[i].sock)) == NULL)
         {
             buffer = concat(manager->clients[i].username, " is disconnected !", 0);
+            send_msg_to_all(manager, &manager->clients[i], buffer, false);
             remove_client(manager, i);
             printf(EOT_CLIENT, i);
         }
-        handle_cmd(manager, &manager->clients[i], buffer);
+        else
+            handle_cmd(manager, &manager->clients[i], buffer);
         free(buffer);
         break;
     }

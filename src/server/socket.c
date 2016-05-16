@@ -27,8 +27,12 @@ char    *read_socket(SOCKET sock)
         perror("read");
         return (NULL);
     }
+    if (n == 0)
+        return (NULL);
+    if (n > 1 && buffer[n - 1] == '\n')
+        buffer[n - 1] = 0;
     buffer[n] = 0;
-    return (strdup(buffer));
+    return (concat(buffer, 0, 0));
 }
 
 SOCKET      init_listen(SOCKET sock)
