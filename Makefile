@@ -1,84 +1,84 @@
-CC		=	gcc -g
+CC		    =	gcc -g
 
-RM		= rm -rf
+RM		    =   rm -rf
 
-NAME		= myirc
+NAME		=   myirc
 
-SERVER		= server
-CLIENT		= client
+SERVER		=   server
+CLIENT		=   client
 
-OBJ_DIR		= obj/
+OBJ_DIR		=   obj/
 
-OBJ_SERVER_DIR	= $(OBJ_DIR)server/
+OBJ_SERVER_DIR  =   $(OBJ_DIR)server/
 
-OBJ_CLIENT_DIR	= $(OBJ_DIR)client/
+OBJ_CLIENT_DIR	=   $(OBJ_DIR)client/
 
-SRC_DIR		= src/
+SRC_DIR		    =   src/
 
-SRC_SERVER_DIR	= $(SRC_DIR)server/
+SRC_SERVER_DIR	=   $(SRC_DIR)server/
 
-SRC_CLIENT_DIR	= $(SRC_DIR)client/
+SRC_CLIENT_DIR	=   $(SRC_DIR)client/
 
-SRC		= $(SRC_DIR)common.c			\
-                  $(SRC_DIR)array.c			\
+SRC		    =   $(SRC_DIR)common.c			\
+                $(SRC_DIR)array.c			\
 
-SRC_SERVER	= $(SRC)
+SRC_SERVER	=   $(SRC)
 
-SRC_CLIENT	= $(SRC)
+SRC_CLIENT	=   $(SRC)
 
-SRC_SERVER	+= $(SRC_SERVER_DIR)server.c		\
-		   $(SRC_SERVER_DIR)socket.c		\
-		   $(SRC_SERVER_DIR)manage_client.c	\
-		   $(SRC_SERVER_DIR)cmd.c		\
+SRC_SERVER	+=  $(SRC_SERVER_DIR)server.c		    \
+		        $(SRC_SERVER_DIR)socket.c		    \
+		        $(SRC_SERVER_DIR)manage_client.c	\
+		        $(SRC_SERVER_DIR)cmd.c		        \
 
-SRC_CLIENT	+= $(SRC_CLIENT_DIR)error.c		\
-		   $(SRC_CLIENT_DIR)client.c		\
-		   $(SRC_CLIENT_DIR)socket.c		\
-		   $(SRC_CLIENT_DIR)string.c		\
-		   $(SRC_CLIENT_DIR)connect.c		\
-		   $(SRC_CLIENT_DIR)transmission.c	\
-		   $(SRC_CLIENT_DIR)get_next_line.c	\
+SRC_CLIENT	+=  $(SRC_CLIENT_DIR)error.c		    \
+		        $(SRC_CLIENT_DIR)client.c		    \
+		        $(SRC_CLIENT_DIR)socket.c		    \
+		        $(SRC_CLIENT_DIR)string.c		    \
+		        $(SRC_CLIENT_DIR)connect.c		    \
+		        $(SRC_CLIENT_DIR)transmission.c	    \
+		        $(SRC_CLIENT_DIR)get_next_line.c	\
 
-CFLAGS		= -I./include -W -Wall -Wextra -Werror -D_GNU_SOURCE -std=c99
+CFLAGS		=   -I./include -W -Wall -Wextra -Werror -D_GNU_SOURCE -std=c99
 
-LD_FLAGS	= -lcrypt
+LD_FLAGS	=
 
-OBJ_CLIENT	= $(SRC_CLIENT:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
+OBJ_CLIENT	=   $(SRC_CLIENT:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 
-OBJ_SERVER	= $(SRC_SERVER:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
+OBJ_SERVER	=   $(SRC_SERVER:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 
-$(OBJ_DIR)%.o	: $(SRC_DIR)%.c
+$(OBJ_DIR)%.o	:   $(SRC_DIR)%.c
 		  @mkdir -p $(OBJ_DIR)
 		  @mkdir -p $(OBJ_SERVER_DIR)
 		  @mkdir -p $(OBJ_CLIENT_DIR)
 		  @echo -e "Compiling $< to $@"
 		  @$(CC) -c $(CFLAGS) $< -o $@
 
-$(NAME):	  $(SERVER) #$(CLIENT)
+$(NAME) :   $(SERVER) #$(CLIENT)
 
-all:		  $(NAME)
+all     :   $(NAME)
 
-$(CLIENT):	  $(OBJ_CLIENT)
+$(CLIENT)   :   $(OBJ_CLIENT)
 		  @echo -e "\033[32mLinking $@\033[00m"
 		  @$(CC) $(OBJ_CLIENT) -o $(CLIENT) $(LD_FLAGS)
 		  @echo -e "\033[33m${CLIENT} Compiled\033[00m"
 
-$(SERVER):	  $(OBJ_SERVER)
+$(SERVER)   :   $(OBJ_SERVER)
 		  @echo -e "\033[32mLinking $@\033[00m"
 		  @$(CC) $(OBJ_SERVER) -o $(SERVER) $(LD_FLAGS)
 		  @echo -e "\033[33m${SERVER} Compiled\033[00m"
 
-clean:
+clean       :
 		  @echo -e "\033[31mRemoving Objects\033[00m"
 		  @$(RM) $(OBJ_SERVER)
 		  @$(RM) $(OBJ_CLIENT)
 
-fclean:		  clean
+fclean      :   clean
 		  @echo -e "\033[31mRemoving ${CLIENT}\033[00m"
 		  @echo -e "\033[31mRemoving ${SERVER}\033[00m"
 		  @$(RM) $(SERVER)
 		  @$(RM) $(CLIENT)
 
-re:		  fclean all
+re          :   fclean all
 
-.PHONY	: all ${SERVER} ${CLIENT} clean fclean re
+.PHONY      :   all ${SERVER} ${CLIENT} clean fclean re
