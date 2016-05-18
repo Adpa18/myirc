@@ -21,6 +21,7 @@ SRC_CLIENT_DIR	=   $(SRC_DIR)client/
 
 SRC		    =   $(SRC_DIR)common.c			\
                 $(SRC_DIR)array.c			\
+                $(SRC_DIR)socket.c			\
 
 SRC_SERVER	=   $(SRC)
 
@@ -31,13 +32,9 @@ SRC_SERVER	+=  $(SRC_SERVER_DIR)server.c		    \
 		        $(SRC_SERVER_DIR)manage_client.c	\
 		        $(SRC_SERVER_DIR)cmd.c		        \
 
-SRC_CLIENT	+=  $(SRC_CLIENT_DIR)error.c		    \
-		        $(SRC_CLIENT_DIR)client.c		    \
-		        $(SRC_CLIENT_DIR)socket.c		    \
-		        $(SRC_CLIENT_DIR)string.c		    \
-		        $(SRC_CLIENT_DIR)connect.c		    \
-		        $(SRC_CLIENT_DIR)transmission.c	    \
-		        $(SRC_CLIENT_DIR)get_next_line.c	\
+SRC_CLIENT  +=  $(SRC_CLIENT_DIR)client.c		\
+                $(SRC_CLIENT_DIR)cmd.c		    \
+
 
 CFLAGS		=   -I./include -W -Wall -Wextra -Werror -D_GNU_SOURCE -std=c99
 
@@ -54,7 +51,7 @@ $(OBJ_DIR)%.o	:   $(SRC_DIR)%.c
 		  @echo -e "Compiling $< to $@"
 		  @$(CC) -c $(CFLAGS) $< -o $@
 
-$(NAME) :   $(SERVER) #$(CLIENT)
+$(NAME) :   $(SERVER) $(CLIENT)
 
 all     :   $(NAME)
 

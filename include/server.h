@@ -1,6 +1,12 @@
-//
-// Created by wery_a on 15/05/16.
-//
+/*
+** array.h for PSU_2015_myirc
+**
+** Made by	Adrien WERY
+** Login	wery_a
+**
+** Started on	Wed Apr 20 21:54:53 2016 Adrien WERY
+** Last update	Wed May 04 14:30:53 2016 Adrien WERY
+*/
 
 #ifndef PSU_2015_MYIRC_SERVER_H
 # define PSU_2015_MYIRC_SERVER_H
@@ -14,7 +20,6 @@
 # define EOT_CLIENT     "Client %d is disconnected !\n"
 # define KILL_SIGINT    "Server was kiled by SIGINT\n"
 
-# define CRLF           "\r\n\0"
 # define WELCOME        "Welcome to my house : "
 # define ERROR_MAX      "Sorry, the maximum number of connections"CRLF
 

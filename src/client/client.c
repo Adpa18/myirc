@@ -5,65 +5,111 @@
 ** Login	vencat_a
 **
 ** Started on	Mon May 16 11:55:19 2016 Axel Vencatareddy
-** Last update	Mon May 16 16:55:51 2016 Axel Vencatareddy
+** Last update	Mon May 16 21:10:35 2016 Axel Vencatareddy
 */
 
+#include <string.h>
+#include <stdlib.h>
+#include <signal.h>
 #include "client.h"
+#include "array.h"
+#include "cmd_client.h"
 
-int		client()
+bool    killed = false;
+
+void        kill_sig(int sig)
 {
-  char		buff[BUFSIZ];
-  int		ret;
-
-  if ((ret = read(0, &buff, BUFSIZ - 1)) == -1)
-    return (my_error("read error", -1));
-  buff[ret] = '\0';
-  printf("This, was written on stdin : \"%s\"\n", buff);
-  return (0);
-}
-
-void		init_struct(t_client *cl)
-{
-  cl->fds[0].fd = 0;
-  cl->fds[1].fd = -1;
-  cl->fd_nb = 1;
-  cl->fds[0].events = POLLIN;
-  cl->fds[1].events = POLLIN;
-  cl->is_end = false;
-}
-
-int		my_poll()
-{
-  int		fd;
-  t_client	cl;
-  char		buff[BUFSIZ];
-
-  init_struct(&cl);
-  while (cl.is_end == false)
+    if (sig == SIGINT)
     {
-      fd = poll(cl.fds, cl.fd_nb, cl.timeout);
-      if (fd > 0)
+        write(1, KILL_SIGINT, strlen(KILL_SIGINT));
+        killed = true;
+    }
+}
+
+COMMAND getCMD(const char *cmd_line)
+{
+    if (cmd_line[0] == '\n')
+        return (false);
+    for (unsigned  int i = 0; i < sizeof(cmdlist_str) / sizeof(char *); ++i)
+    {
+        if (strcasecmp(cmd_line, cmdlist_str[i]) == 0)
         {
-          if (cl.fds[0].revents & POLLIN)
+            return (i);
+        }
+    }
+    return (NO_CMD);
+}
+
+bool  handle_cmd(t_client *cl)
+{
+    COMMAND   cmd;
+    char      **array;
+    char      *buffer;
+    bool      ret;
+
+    ret = true;
+    if ((buffer = read_socket(0)) == NULL || buffer[0] == '\n')
+        return (false);
+    if ((array = split(buffer, " ")) == NULL)
+        return (false);
+    if ((cmd = getCMD(array[0])) == NO_CMD)
+        write_socket(cl->sock, cmd);
+    else if (cl->isConnected || cmd == SERVER || cmd == HELP)
+        ret = cmdlist_func[cmd](cl, (const char **)&array[1]);
+    else
+        write_socket(STDOUT_FILENO, NEED_CO);
+    free(buffer);
+    return (ret);
+}
+
+bool    init_select(fd_set *rdfs, t_client *cl)
+{
+    FD_ZERO(rdfs);
+    FD_SET(STDIN_FILENO, rdfs);
+    if (cl->isConnected)
+        FD_SET(cl->sock, rdfs);
+    if (select(cl->max_fd + 1, rdfs, NULL, NULL, NULL) == -1)
+    {
+        perror("select");
+        close(cl->sock);
+        return (false);
+    }
+    return (true);
+}
+
+void  client()
+{
+    t_client  cl;
+    fd_set    rdfs;
+    char      *buffer;
+
+    cl.isConnected = false;
+    while (!killed)
+    {
+        if (!init_select(&rdfs, &cl))
+            break;
+        if (FD_ISSET(STDIN_FILENO, &rdfs))
+            handle_cmd(&cl);
+        else if (FD_ISSET(cl.sock, &rdfs))
+        {
+            if (!(buffer = read_socket(cl.sock)))
             {
-              if (client() == -1)
-                return (-1);
+                write_socket(STDOUT_FILENO, EOT_SERVER);
+                cl.isConnected = false;
             }
-          if (cl.fd_nb == 2 && cl.fds[1].revents & POLLIN)
+            else
             {
-              if ((fd = read(cl.fds[1].fd, &buff, BUFSIZ - 1)) == -1)
-                return (my_error("read error", -1));
-              buff[fd] = '\0';
-              write(1, buff, fd);
+                write_socket(STDOUT_FILENO, buffer);
+                write(STDOUT_FILENO, "\n", 1);
+                free(buffer);
             }
         }
     }
-  return (0);
 }
 
 int		main()
 {
-  if (my_poll() == -1)
-    return (-1);
-  return (0);
+    signal(SIGINT, &kill_sig);
+    client();
+    return (0);
 }

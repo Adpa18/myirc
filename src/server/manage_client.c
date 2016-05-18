@@ -1,12 +1,17 @@
-//
-// Created by wery_a on 15/05/16.
-//
+/*
+** array.h for PSU_2015_myirc
+**
+** Made by	Adrien WERY
+** Login	wery_a
+**
+** Started on	Wed Apr 20 21:54:53 2016 Adrien WERY
+** Last update	Wed May 04 14:30:53 2016 Adrien WERY
+*/
 
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <server.h>
 #include "server.h"
 
 char    *genNick()
@@ -39,15 +44,17 @@ bool    new_client(SOCKET sock, fd_set *rdfs, Manager *manager)
     manager->clients[manager->size].sock = csock;
     manager->clients[manager->size].username = genNick();
     memset(manager->clients[manager->size].channel, 0, 200);
-    buffer = concat(WELCOME, manager->clients[manager->size].username, 0);
-    ++manager->size;
+    buffer = concat(WELCOME, manager->clients[manager->size].username, " \n");
     write_socket(csock, buffer);
     free(buffer);
+    DEBUG("New Client %s\n", manager->clients[manager->size].username);
+    ++manager->size;
     return (true);
 }
 
 void    remove_client(Manager *manager, int to_remove)
 {
+    free(manager->clients[to_remove].username);
     close(manager->clients[to_remove].sock);
     memmove(manager->clients + to_remove, manager->clients + to_remove + 1,
             (manager->size - to_remove - 1) * sizeof(Client));
@@ -67,7 +74,7 @@ void    listen_clients(fd_set *rdfs, Manager *manager)
             buffer = concat(manager->clients[i].username, " is disconnected !", 0);
             send_msg_to_all(manager, &manager->clients[i], buffer, false);
             remove_client(manager, i);
-            printf(EOT_CLIENT, i);
+            DEBUG("%s\n", buffer);
         }
         else
             handle_cmd(manager, &manager->clients[i], buffer);

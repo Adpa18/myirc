@@ -1,3 +1,13 @@
+/*
+** array.h for PSU_2015_myirc
+**
+** Made by	Adrien WERY
+** Login	wery_a
+**
+** Started on	Wed Apr 20 21:54:53 2016 Adrien WERY
+** Last update	Wed May 04 14:30:53 2016 Adrien WERY
+*/
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,7 +38,6 @@ void    clean_manager(Manager *manager)
 bool    init_select(fd_set *rdfs, int sock, Manager *manager)
 {
     FD_ZERO(rdfs);
-//    FD_SET(STDIN_FILENO, rdfs);
     FD_SET(sock, rdfs);
     for (int i = 0; i < manager->size; ++i)
     {

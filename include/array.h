@@ -1,5 +1,5 @@
 /*
-** array.h for PSU_2015_myftp
+** array.h for PSU_2015_myirc
 **
 ** Made by	Adrien WERY
 ** Login	wery_a
@@ -9,7 +9,7 @@
 */
 
 #ifndef ARRAY_H
-#define ARRAY_H
+# define ARRAY_H
 
 int     array_len(const char **array);
 void    free_array(char **array);

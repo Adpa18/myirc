@@ -1,12 +1,18 @@
-//
-// Created by wery_a on 16/05/16.
-//
+/*
+** array.h for PSU_2015_myirc
+**
+** Made by	Adrien WERY
+** Login	wery_a
+**
+** Started on	Wed Apr 20 21:54:53 2016 Adrien WERY
+** Last update	Wed May 04 14:30:53 2016 Adrien WERY
+*/
 
-#include <server.h>
 #include <string.h>
-#include <cmd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "server.h"
+#include "cmd_server.h"
 #include "array.h"
 
 bool    handle_cmd(Manager *manager, Client *client, const char *cmd_line)
