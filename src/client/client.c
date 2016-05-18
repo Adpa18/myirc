@@ -53,7 +53,7 @@ bool  handle_cmd(t_client *cl)
     if ((array = split(buffer, " ")) == NULL)
         return (false);
     if ((cmd = getCMD(array[0])) == NO_CMD)
-        write_socket(cl->sock, cmd);
+        write_socket(cl->sock, buffer);
     else if (cl->isConnected || cmd == SERVER || cmd == HELP)
         ret = cmdlist_func[cmd](cl, (const char **)&array[1]);
     else

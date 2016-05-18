@@ -11,27 +11,38 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
+#include <pwd.h>
+#include <netdb.h>
+#include <arpa/inet.h>
 #include "common.h"
 
-inline char *concat(const char *s1, const char *s2, const char *s3)
+inline char *concat(int count, ...)
 {
-    size_t  len1;
-    size_t  len2;
-    size_t  len3;
+    va_list argp;
+    size_t  full_len;
+    size_t  len;
     char    *dest;
+    char    *s;
 
-    len1 = (s1) ? strlen(s1) : 0;
-    len2 = (s2) ? strlen(s2) : 0;
-    len3 = (s3) ? strlen(s3) : 0;
-    if ((dest = malloc(len1 + len2 + len3 + 1)) == NULL)
+    va_start(argp, count);
+    len = 0;
+    for (int i = 0; i < count; ++i)
+        len += strlen(va_arg(argp, char *));
+    va_end(argp);
+    if ((dest = malloc(len + 1)) == NULL)
         return (NULL);
-    if (s1)
-        memcpy(dest, s1, len1);
-    if (s2)
-        memcpy(dest + len1, s2, len2);
-    if (s3)
-        memcpy(dest + len1 + len2, s3, len3 + 1);
-    dest[len1 + len2 + len3] = 0;
+    dest[len] = 0;
+    va_start(argp, count);
+    full_len = 0;
+    for (int i = 0; i < count; ++i)
+    {
+        if (!(s = va_arg(argp, char *)) || (len = strlen(s)) == 0)
+            continue;
+        memcpy(dest + full_len, s, len);
+        full_len += len;
+    }
+    va_end(argp);
     return (dest);
 }
 
@@ -46,4 +57,31 @@ inline char *replace(char *s, char c, char by)
             s[i] = by;
     }
     return (s);
+}
+
+#include <stdio.h>
+
+inline char     *getHostName(const char *ip)
+{
+    struct hostent  *hp;
+    long            addr;
+
+    addr = inet_addr(ip);
+    if ((hp = gethostbyaddr((char *) &addr, sizeof(addr), AF_INET)))
+        return (NULL);
+    printf("Hostname:\t%s\n", hp->h_name);
+    printf("Aliases:\t");
+    while (hp->h_aliases[0])
+        printf("%s ", *hp->h_aliases++);
+    printf("\n");
+    printf("Addresses:\t");
+    while (hp->h_addr_list[0])
+        printf("%s ", inet_ntoa(*(struct in_addr *) * hp->h_addr_list++));
+    printf("\n");
+    return (hp->h_name);
+}
+
+inline struct passwd    *getUser()
+{
+    return (getpwuid(geteuid()));
 }

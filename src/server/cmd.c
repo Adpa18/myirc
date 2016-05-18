@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Wed Apr 20 21:54:53 2016 Adrien WERY
-** Last update	Wed May 04 14:30:53 2016 Adrien WERY
+** Last update	Wed May 18 14:11:09 2016 Adrien WERY
 */
 
 #include <string.h>
@@ -33,7 +33,7 @@ bool    handle_cmd(Manager *manager, Client *client, const char *cmd_line)
             return (ret);
         }
     }
-    buffer = concat(client->username, " : ", cmd_line);
+    buffer = concat(3, client->username, " : ", cmd_line);
     send_msg_to_all(manager, client, buffer, false);
     free_array(array);
     free(buffer);
@@ -62,7 +62,7 @@ bool        irc_nick(Manager *manager, Client *client, const char **arg)
         return (false);
     }
     // if same as someone erase both
-    buffer = concat(client->username, " has changed nick to ", arg[0]);
+    buffer = concat(3, client->username, " has changed nick to ", arg[0]);
     if (client->username)
         client->username = strdup(arg[0]);
     send_msg_to_all(manager, client, buffer, true);
@@ -89,7 +89,7 @@ bool        irc_join(Manager *manager, Client *client, const char **arg)
         return (false);
     }
     strcpy(client->channel, arg[0]);
-    buffer = concat(client->username, " has joined ", client->channel);
+    buffer = concat(3, client->username, " has joined ", client->channel);
     send_msg_to_all(manager, client, buffer, true);
     free(buffer);
     return (true);
@@ -101,7 +101,7 @@ bool        irc_part(Manager *manager, Client *client, const char **arg)
 
     (void)manager;
     (void)arg;
-    buffer = concat(client->username, " has left ", client->channel);
+    buffer = concat(3, client->username, " has left ", client->channel);
     send_msg_to_all(manager, client, buffer, true);
     free(buffer);
     memset(client->channel, 0, 200);
@@ -118,7 +118,7 @@ bool        irc_users(Manager *manager, Client *client, const char **arg)
     for (int i = 0; i < manager->size; ++i)
     {
         tmp = buffer;
-        buffer = concat(buffer, manager->clients[i].username, "\n");
+        buffer = concat(3, buffer, manager->clients[i].username, "\n");
         free(tmp);
     }
     write_socket(client->sock, buffer);
@@ -139,7 +139,7 @@ bool        irc_msg(Manager *manager, Client *client, const char **arg)
     {
         if (!strcmp(arg[0], manager->clients[i].username))
         {
-            buffer = concat(client->username, " : ", arg[1]);
+            buffer = concat(3, client->username, " : ", arg[1]);
             write_socket(manager->clients[i].sock, buffer);
             free(buffer);
             break;

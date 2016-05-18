@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Wed Apr 20 21:54:53 2016 Adrien WERY
-** Last update	Wed May 04 14:30:53 2016 Adrien WERY
+** Last update	Wed May 18 14:12:13 2016 Adrien WERY
 */
 
 #include <unistd.h>
@@ -36,5 +36,5 @@ char    *read_socket(SOCKET sock)
     if (n > 1 && buffer[n - 1] == '\n')
         buffer[n - 1] = 0;
     buffer[n] = 0;
-    return (concat(buffer, 0, 0));
+    return (concat(1, buffer));
 }

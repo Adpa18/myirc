@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Wed Apr 20 21:54:53 2016 Adrien WERY
-** Last update	Wed May 04 14:30:53 2016 Adrien WERY
+** Last update	Wed May 18 14:11:49 2016 Adrien WERY
 */
 
 #include <unistd.h>
@@ -19,7 +19,7 @@ char    *genNick()
     char    buffer[BUFF_SIZE];
 
     sprintf(buffer, "%d", rand() % 100000 + 10000);
-    return (concat(NICK_PREFIX, buffer, 0));
+    return (concat(2, NICK_PREFIX, buffer));
 }
 
 bool    new_client(SOCKET sock, fd_set *rdfs, Manager *manager)
@@ -44,7 +44,7 @@ bool    new_client(SOCKET sock, fd_set *rdfs, Manager *manager)
     manager->clients[manager->size].sock = csock;
     manager->clients[manager->size].username = genNick();
     memset(manager->clients[manager->size].channel, 0, 200);
-    buffer = concat(WELCOME, manager->clients[manager->size].username, " \n");
+    buffer = concat(3, WELCOME, manager->clients[manager->size].username, CRLF);
     write_socket(csock, buffer);
     free(buffer);
     DEBUG("New Client %s\n", manager->clients[manager->size].username);
@@ -71,13 +71,16 @@ void    listen_clients(fd_set *rdfs, Manager *manager)
             continue;
         if ((buffer = read_socket(manager->clients[i].sock)) == NULL)
         {
-            buffer = concat(manager->clients[i].username, " is disconnected !", 0);
+            buffer = concat(2, manager->clients[i].username, " is disconnected !");
             send_msg_to_all(manager, &manager->clients[i], buffer, false);
             remove_client(manager, i);
             DEBUG("%s\n", buffer);
         }
         else
+        {
+            DEBUG("buffer = %s\n", buffer);
             handle_cmd(manager, &manager->clients[i], buffer);
+        }
         free(buffer);
         break;
     }

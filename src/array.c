@@ -12,6 +12,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "array.h"
+#include "common.h"
 
 inline int     array_len(const char **array)
 {
@@ -86,4 +87,20 @@ inline char     **split(const char *s, const char *delim)
     free(copy);
     array[i] = NULL;
     return (array);
+}
+
+inline char     *merge(const char **array, const char *delim)
+{
+    char    *dest;
+    char    *tmp;
+
+    dest = NULL;
+    for (int i = 0; i < array_len(array); ++i)
+    {
+        tmp = dest;
+        dest = concat(dest, (dest) ? delim : NULL, array[i]);
+        if (tmp)
+            free(tmp);
+    }
+    return (dest);
 }

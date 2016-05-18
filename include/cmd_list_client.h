@@ -16,6 +16,7 @@
 
 # define INVALID_ARG    "Invalid Arguments\n"
 
+void    send_cmd(SOCKET sock, const char *cmd, const char *arg);
 bool    irc_server(t_client *cl, const char **arg);
 bool    irc_nick(t_client *cl, const char **arg);
 bool    irc_list(t_client *cl, const char **arg);
@@ -25,6 +26,6 @@ bool    irc_users(t_client *cl, const char **arg);
 bool    irc_send_file(t_client *cl, const char **arg);
 bool    irc_accept_file(t_client *cl, const char **arg);
 bool    irc_help(t_client *cl, const char **arg);
-bool    irc_exit(t_client *cl, const char **arg);
+bool    irc_quit(t_client *cl, const char **arg);
 
 #endif //PSU_2015_MYIRC_CMD_LIST_CLIENT_H

@@ -20,7 +20,9 @@
 typedef enum { false, true } bool;
 
 void    debug(const char *s);
-char    *concat(const char *s1, const char *s2, const char *s3);
+char    *concat(int count, ...);
 char    *replace(char *s, char c, char by);
+char    *getHostName(const char *ip);
+struct passwd   *getUser();
 
 #endif //PSU_2015_MYIRC_COMMON_H

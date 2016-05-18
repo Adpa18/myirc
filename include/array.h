@@ -15,5 +15,6 @@ int     array_len(const char **array);
 void    free_array(char **array);
 void    print_array(const char **array);
 char    **split(const char *s, const char *delim);
+char    *merge(const char **array, const char *delim);
 
 #endif /* !ARRAY_H */
