@@ -52,7 +52,7 @@ bool  handle_cmd(t_client *cl)
         return (false);
     if ((array = split(buffer, " ")) == NULL)
         return (false);
-    if ((cmd = getCMD(array[0])) == NO_CMD)
+    if ((cmd = getCMD(array[0])) == NO_CMD && cl->isConnected)
         write_socket(cl->sock, buffer);
     else if (cl->isConnected || cmd == SERVER || cmd == HELP)
         ret = cmdlist_func[cmd](cl, (const char **)&array[1]);
@@ -83,6 +83,7 @@ void  client()
     fd_set    rdfs;
     char      *buffer;
 
+    cl.max_fd = STDIN_FILENO;
     cl.isConnected = false;
     while (!killed)
     {

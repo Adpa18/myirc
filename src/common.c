@@ -37,7 +37,7 @@ inline char *concat(int count, ...)
     full_len = 0;
     for (int i = 0; i < count; ++i)
     {
-        if (!(s = va_arg(argp, char *)) || (len = strlen(s)) == 0)
+        if (!(s = va_arg(argp, char *)) || s[0] == 0 || (len = strlen(s)) == 0)
             continue;
         memcpy(dest + full_len, s, len);
         full_len += len;
@@ -59,29 +59,18 @@ inline char *replace(char *s, char c, char by)
     return (s);
 }
 
-#include <stdio.h>
-
-inline char     *getHostName(const char *ip)
-{
-    struct hostent  *hp;
-    long            addr;
-
-    addr = inet_addr(ip);
-    if ((hp = gethostbyaddr((char *) &addr, sizeof(addr), AF_INET)))
-        return (NULL);
-    printf("Hostname:\t%s\n", hp->h_name);
-    printf("Aliases:\t");
-    while (hp->h_aliases[0])
-        printf("%s ", *hp->h_aliases++);
-    printf("\n");
-    printf("Addresses:\t");
-    while (hp->h_addr_list[0])
-        printf("%s ", inet_ntoa(*(struct in_addr *) * hp->h_addr_list++));
-    printf("\n");
-    return (hp->h_name);
-}
-
 inline struct passwd    *getUser()
 {
     return (getpwuid(geteuid()));
+}
+
+inline const char *getIP(const char *hostname)
+{
+    struct hostent  *he;
+    struct in_addr  **addr_list;
+
+    if (!(he = gethostbyname(hostname)))
+        return (hostname);
+    addr_list = (struct in_addr **) he->h_addr_list;
+    return (inet_ntoa(*addr_list[0]));
 }

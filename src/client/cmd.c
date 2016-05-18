@@ -20,7 +20,10 @@ void    send_cmd(SOCKET sock, const char *cmd, const char *arg)
 {
     char    *buffer;
 
-    buffer = concat(3, cmd, arg, CRLF);
+    if (arg)
+        buffer = concat(3, cmd, arg, CRLF);
+    else
+        buffer = concat(2, cmd, CRLF);
     write_socket(sock, buffer);
     free(buffer);
 }
@@ -41,11 +44,9 @@ void    init_connection(t_client *cl)
 bool    irc_server(t_client *cl, const char **arg)
 {
     SOCKADDR_IN     s_in;
+    char            *buffer;
     struct timeval  t;
-    char            **array;
 
-    if (!(array = split(arg[0], " ")) || !array[0] || !array[1])
-        return (free_array(array), false);
     t.tv_sec = 30;
     t.tv_usec = 0;
     if ((cl->sock = socket(AF_INET, SOCK_STREAM, 0)) == -1)
@@ -54,14 +55,18 @@ bool    irc_server(t_client *cl, const char **arg)
         return (false);
     }
     s_in.sin_family = AF_INET;
-    s_in.sin_port = htons(atoi(array[1]));
-    s_in.sin_addr.s_addr = inet_addr(array[0]);
+    s_in.sin_port = htons((arg[1]) ? atoi(arg[1]) : 6667);
+    s_in.sin_addr.s_addr = inet_addr(getIP(arg[0]));
     setsockopt(cl->sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&t, sizeof(t));
     if (connect(cl->sock, (SOCKADDR *)&s_in, sizeof(s_in)) == -1)
         return (perror("conect"), false);
     cl->max_fd = cl->sock > cl->max_fd ? cl->sock : cl->max_fd;
     cl->isConnected = true;
     init_connection(cl);
+    buffer = concat(3, "Connected to ", arg[0], "\n");
+    write_socket(STDOUT_FILENO, buffer);
+    free(buffer);
+
     return (true);
 }
 
@@ -85,11 +90,27 @@ bool    irc_user(t_client *cl, const char **arg)
         write_socket(STDOUT_FILENO, INVALID_ARG);
         return (false);
     }
-    buffer = merge(arg, ' ');
+    buffer = merge(arg, " ");
     send_cmd(cl->sock, "USER ", buffer);
     free(buffer);
     return (true);
 }
+
+bool    irc_msg(t_client *cl, const char **arg)
+{
+    char    *buffer;
+
+    if (!arg || !arg[0])
+    {
+        write_socket(STDOUT_FILENO, INVALID_ARG);
+        return (false);
+    }
+    buffer = merge(arg, " ");
+    send_cmd(cl->sock, "PRIVMSG ", buffer);
+    free(buffer);
+    return (true);
+}
+
 
 bool    irc_list(t_client *cl, const char **arg)
 {

@@ -19,10 +19,12 @@
 void    send_cmd(SOCKET sock, const char *cmd, const char *arg);
 bool    irc_server(t_client *cl, const char **arg);
 bool    irc_nick(t_client *cl, const char **arg);
+bool    irc_user(t_client *cl, const char **arg);
 bool    irc_list(t_client *cl, const char **arg);
 bool    irc_join(t_client *cl, const char **arg);
 bool    irc_part(t_client *cl, const char **arg);
 bool    irc_users(t_client *cl, const char **arg);
+bool    irc_msg(t_client *cl, const char **arg);
 bool    irc_send_file(t_client *cl, const char **arg);
 bool    irc_accept_file(t_client *cl, const char **arg);
 bool    irc_help(t_client *cl, const char **arg);
