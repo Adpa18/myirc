@@ -21,6 +21,7 @@ typedef struct sockaddr_in SOCKADDR_IN;
 typedef struct sockaddr SOCKADDR;
 typedef struct in_addr IN_ADDR;
 
+bool    write_server_socket(SOCKET sock, const char *buffer);
 bool    write_socket(SOCKET sock, const char *buffer);
 char    *read_socket(SOCKET sock);
 SOCKET  init_server(unsigned int port);

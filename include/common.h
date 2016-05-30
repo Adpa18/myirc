@@ -14,15 +14,15 @@
 # define DEBUGING       true
 # define DEBUG(s, ...)  {if(DEBUGING){printf(s, __VA_ARGS__);}};
 # define CRLF           "\r\n\0"
+# define SERVER_NAME    "AvengesIRC"
 # define BUFF_SIZE      1024
 # define DEFAULT_PORT   6697
 
 typedef enum { false, true } bool;
 
-void    debug(const char *s);
-char    *concat(int count, ...);
-char    *replace(char *s, char c, char by);
-const char  *getIP(const char *hostname);
+char            *concat(int count, ...);
+char            *replace(char *s, char c, char by);
+const char      *getIP(const char *hostname);
 struct passwd   *getUser();
 
 #endif //PSU_2015_MYIRC_COMMON_H

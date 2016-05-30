@@ -9,10 +9,22 @@
 */
 
 #include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include "server.h"
 
 extern bool    killed;
+
+bool    write_server_socket(SOCKET sock, const char *buffer)
+{
+    char    *tmp;
+    bool    ret;
+
+    tmp = concat(3, ":"SERVER_NAME" ", buffer, CRLF);
+    ret = write_socket(sock, tmp);
+    free(tmp);
+    return (ret);
+}
 
 SOCKET      init_listen(SOCKET sock)
 {

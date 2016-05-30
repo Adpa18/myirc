@@ -14,11 +14,13 @@
 # include "server.h"
 
 bool    irc_nick(Manager *manager, Client *client, const char **arg);
+bool    irc_user(Manager *manager, Client *client, const char **arg);
 bool    irc_list(Manager *manager, Client *client, const char **arg);
 bool    irc_join(Manager *manager, Client *client, const char **arg);
 bool    irc_part(Manager *manager, Client *client, const char **arg);
 bool    irc_users(Manager *manager, Client *client, const char **arg);
 bool    irc_msg(Manager *manager, Client *client, const char **arg);
+bool    irc_quit(Manager *manager, Client *client, const char **arg);
 bool    irc_send_file(Manager *manager, Client *client, const char **arg);
 bool    irc_accept_file(Manager *manager, Client *client, const char **arg);
 

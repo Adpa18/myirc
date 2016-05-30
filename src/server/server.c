@@ -14,6 +14,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <time.h>
+#include <server.h>
 #include "server.h"
 
 bool    killed = false;
@@ -29,7 +30,7 @@ void        kill_sig(int sig)
 
 void    clean_manager(Manager *manager)
 {
-    for (int i = 0; i < manager->size; i++)
+    for (int i = 0; i < manager->client_size; i++)
     {
         close(manager->clients[i].sock);
     }
@@ -39,7 +40,7 @@ bool    init_select(fd_set *rdfs, int sock, Manager *manager)
 {
     FD_ZERO(rdfs);
     FD_SET(sock, rdfs);
-    for (int i = 0; i < manager->size; ++i)
+    for (int i = 0; i < manager->client_size; ++i)
     {
         FD_SET(manager->clients[i].sock, rdfs);
     }
@@ -60,7 +61,8 @@ void    server(unsigned int port)
 
     if ((sock = init_server(port)) == -1)
         return;
-    manager.size = 0;
+    manager.client_size = 0;
+    manager.channel_size = 0;
     manager.max_fd = sock;
     while (!killed)
     {

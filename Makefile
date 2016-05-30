@@ -30,6 +30,7 @@ SRC_CLIENT	=   $(SRC)
 SRC_SERVER	+=  $(SRC_SERVER_DIR)server.c		    \
 		        $(SRC_SERVER_DIR)socket.c		    \
 		        $(SRC_SERVER_DIR)manage_client.c	\
+		        $(SRC_SERVER_DIR)manage_channel.c	\
 		        $(SRC_SERVER_DIR)cmd.c		        \
 
 SRC_CLIENT  +=  $(SRC_CLIENT_DIR)client.c		\

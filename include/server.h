@@ -16,6 +16,7 @@
 
 # define USAGE          "./server [port]\n"
 # define MAX_CLIENTS    42
+# define MAX_CHANNELS   42
 # define NICK_PREFIX    "Guest"
 # define EOT_CLIENT     "Client %d is disconnected !\n"
 # define KILL_SIGINT    "Server was kiled by SIGINT\n"
@@ -23,24 +24,45 @@
 # define WELCOME        "Welcome to my house : "
 # define ERROR_MAX      "Sorry, the maximum number of connections"CRLF
 
-typedef struct
+typedef struct Client   Client;
+typedef struct Channel  Channel;
+
+struct Client
 {
-    SOCKET      sock;
-    char        *username;
-    char        channel[200];
-}               Client;
+    unsigned int    id;
+    SOCKET          sock;
+    char            *username;
+    Channel         *channels[MAX_CHANNELS];
+    int             channel_size;
+};
+
+struct Channel
+{
+    unsigned int    id;
+    char            name[200];
+    Client          *clients[MAX_CLIENTS];
+    int             client_size;
+};
 
 typedef struct
 {
-    Client  clients[MAX_CLIENTS];
-    int     size;
+    Client  clients[MAX_CLIENTS * MAX_CHANNELS];
+    Channel channels[MAX_CHANNELS * MAX_CLIENTS];
+    int     client_size;
+    int     channel_size;
     int     max_fd;
 }           Manager;
 
 bool        new_client(SOCKET sock, fd_set *rdfs, Manager *manager);
 void        remove_client(Manager *manager, int to_remove);
 void        listen_clients(fd_set *rdfs, Manager *manager);
+Channel     *new_channel(Manager *manager, const char *channel_str);
+void        remove_channel(Manager *manager, int to_remove);
+Channel     *getChannel(Manager *manager, const char *channel_str);
+void        join_channel(Client *client, Channel *channel);
+void        part_channel(Client *client, Channel *channel);
+bool        handle_cmds(Manager *manager, Client *client, const char *cmd_line);
 bool        handle_cmd(Manager *manager, Client *client, const char *cmd_line);
-void        send_msg_to_all(Manager *manager, Client *client, const char *msg, bool himself);
+void        send_msg_to_all(Client *client, const char *msg, Channel *channel, bool himself);
 
 #endif //PSU_2015_MYIRC_SERVER_H
