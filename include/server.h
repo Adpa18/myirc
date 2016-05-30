@@ -31,6 +31,7 @@ struct Client
 {
     unsigned int    id;
     SOCKET          sock;
+    bool            registered;
     char            *username;
     Channel         *channels[MAX_CHANNELS];
     int             channel_size;
@@ -56,9 +57,10 @@ typedef struct
 bool        new_client(SOCKET sock, fd_set *rdfs, Manager *manager);
 void        remove_client(Manager *manager, int to_remove);
 void        listen_clients(fd_set *rdfs, Manager *manager);
+Client      *getClient(Manager *manager, const char *client_str);
 Channel     *new_channel(Manager *manager, const char *channel_str);
 void        remove_channel(Manager *manager, int to_remove);
-Channel     *getChannel(Manager *manager, const char *channel_str);
+Channel     *getChannel(Channel *channels, int size, const char *channel_str);
 void        join_channel(Client *client, Channel *channel);
 void        part_channel(Client *client, Channel *channel);
 bool        handle_cmds(Manager *manager, Client *client, const char *cmd_line);

@@ -23,6 +23,16 @@ char    *genNick()
     return (concat(2, NICK_PREFIX, buffer));
 }
 
+Client  *getClient(Manager *manager, const char *client_str)
+{
+    for (int i = 0; i < manager->client_size; ++i)
+    {
+        if (strcmp(manager->clients[i].username, client_str) == 0)
+            return (&manager->clients[i]);
+    }
+    return (NULL);
+}
+
 bool    new_client(SOCKET sock, fd_set *rdfs, Manager *manager)
 {
     SOCKET      csock;
@@ -45,6 +55,7 @@ bool    new_client(SOCKET sock, fd_set *rdfs, Manager *manager)
     manager->clients[manager->client_size].username = genNick();
     manager->clients[manager->client_size].channel_size = 0;
     manager->clients[manager->client_size].id = manager->client_size;
+    manager->clients[manager->client_size].registered = false;
     ++manager->client_size;
     DEBUG("New Client %s\n", manager->clients[manager->client_size - 1].username);
     return (true);

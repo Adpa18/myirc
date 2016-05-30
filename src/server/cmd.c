@@ -11,6 +11,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <error.h>
 #include <server.h>
 #include "server.h"
 #include "cmd_server.h"
@@ -34,7 +35,6 @@ bool    handle_cmds(Manager *manager, Client *client, const char *cmd_line)
 bool    handle_cmd(Manager *manager, Client *client, const char *cmd_line)
 {
     char    **array;
-//    char    *buffer;
     bool    ret;
 
     if (cmd_line[0] == '\n')
@@ -48,10 +48,7 @@ bool    handle_cmd(Manager *manager, Client *client, const char *cmd_line)
         free_array(array);
         return (ret);
     }
-//    buffer = concat(3, client->username, " : ", cmd_line);
-//    send_msg_to_all(manager, client, buffer, false);
     free_array(array);
-//    free(buffer);
     return (true);
 }
 
@@ -79,10 +76,14 @@ bool        irc_nick(Manager *manager, Client *client, const char **arg)
     (void)manager;
     if (!arg || !arg[0] || replace((char *)arg[0], '\n', '\0')[0] == 0)
     {
-        write_server_socket(client->sock, "433 :Invalid Username");
+        write_server_socket(client->sock, ERR_NONICKNAMEGIVEN);
         return (false);
     }
-    // if same as someone erase both
+    if (getClient(manager, arg[0]))
+    {
+        write_server_socket(client->sock, ERR_NICKNAMEINUSE);
+        return (false);
+    }
     buffer = concat(3, client->username, " has changed nick to ", arg[0]);
     if (client->username)
         client->username = strdup(arg[0]);
@@ -95,9 +96,12 @@ bool        irc_user(Manager *manager, Client *client, const char **arg)
 {
     char    *buffer;
 
+    if (client->registered)
+        return (write_server_socket(client->sock, ERR_ALREADYREGISTERED), false);
     buffer = concat(3, "001 ", WELCOME, client->username);
     write_server_socket(client->sock, buffer);
     free(buffer);
+    client->registered = true;
     (void)manager;
     (void)arg;
     return (true);
@@ -119,10 +123,10 @@ bool        irc_join(Manager *manager, Client *client, const char **arg)
     if (!arg || !arg[0] || strlen(arg[0]) > 200
         || (arg[0][0] != '&' && arg[0][0] != '#'))
     {
-        write_socket(client->sock, "Invalid Channel\n");
+        write_server_socket(client->sock, ERR_NOSUCHCHANNEL);
         return (false);
     }
-    if (!(channel = getChannel(manager, arg[0])))
+    if (!(channel = getChannel(manager->channels, manager->channel_size, arg[0])))
         channel = new_channel(manager, arg[0]);
     join_channel(client, channel);
     buffer = concat(3, client->username, " has joined ", channel->name);
@@ -136,9 +140,8 @@ bool        irc_part(Manager *manager, Client *client, const char **arg)
     char    *buffer;
     Channel *channel;
 
-    (void)manager;
-    if (!(channel = getChannel(manager, arg[0])))
-        write_server_socket(client->sock, "403 ERR_NOSUCHCHANNEL");
+    if (!(channel = getChannel(manager->channels, manager->channel_size, arg[0])))
+        write_server_socket(client->sock, ERR_NOTONCHANNEL);
     buffer = concat(3, client->username, " has left ", channel->name);
     send_msg_to_all(client, buffer, channel, true);
     free(buffer);
@@ -167,22 +170,27 @@ bool        irc_users(Manager *manager, Client *client, const char **arg)
 bool        irc_msg(Manager *manager, Client *client, const char **arg)
 {
     char    *buffer;
+    Channel *channel;
+    Client  *client_dest;
 
-    if (!arg[0] || !arg[1])
+    if (!arg[0])
+        return (write_socket(client->sock, ERR_NORECIPIENT), false);
+    if (!arg[1])
+        return (write_socket(client->sock, ERR_NOTEXTTOSEND), false);
+    buffer = concat(3, client->username, " : ", arg[1]);
+    if (arg[0][0] == '#' || arg[0][0] == '&')
     {
-        write_socket(client->sock, "Invalid Nick or Message\n");
-        return (false);
+        if (!(channel = getChannel(manager->channels, manager->channel_size, arg[0])))
+            return (free(buffer), write_socket(client->sock, ERR_NOSUCHNICK), false);
+        send_msg_to_all(client, buffer, channel, true);
     }
-    for (int i = 0; i < manager->client_size; ++i)
+    else
     {
-        if (!strcmp(arg[0], manager->clients[i].username))
-        {
-            buffer = concat(3, client->username, " : ", arg[1]);
-            write_socket(manager->clients[i].sock, buffer);
-            free(buffer);
-            break;
-        }
+        if (!(client_dest = getClient(manager, arg[0])))
+            return (free(buffer), write_socket(client->sock, ERR_NOSUCHNICK), false);
+        write_server_socket(client_dest->sock, arg[1]);
     }
+    free(buffer);
     return (true);
 }
 

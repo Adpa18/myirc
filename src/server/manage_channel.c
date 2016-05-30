@@ -11,13 +11,13 @@
 #include <server.h>
 #include <string.h>
 
-Channel *getChannel(Manager *manager, const char *channel_str)
+Channel *getChannel(Channel *channels, int size, const char *channel_str)
 {
-    for (int i = 0; i < manager->channel_size; ++i)
+    for (int i = 0; i < size; ++i)
     {
-        if (strcmp(manager->channels[i].name, channel_str) == 0)
+        if (strcmp(channels[i].name, channel_str) == 0)
         {
-            return (&manager->channels[i]);
+            return (&channels[i]);
         }
     }
     return (NULL);
