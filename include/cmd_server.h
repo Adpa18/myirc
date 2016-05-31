@@ -16,12 +16,13 @@
 
 typedef enum COMMAND
 {
-  NICK, USER, LIST, JOIN, PART, USERS, NAMES, MSG, QUIT, SEND_FILE, ACCEPT_FILE
+  NICK, USER, LIST, JOIN, PART, USERS, NAMES, PRIVMSG, QUIT,
+    SEND_FILE, ACCEPT_FILE
 }   COMMAND;
 
 static const char *cmdlist_str[] =
 {
-  "NICK", "USER", "LIST", "JOIN", "PART", "USERS", "NAMES", "MSG", "QUIT",
+  "NICK", "USER", "LIST", "JOIN", "PART", "USERS", "NAMES", "PRIVMSG", "QUIT",
   "SEND_FILE", "ACCEPT_FILE"
 };
 

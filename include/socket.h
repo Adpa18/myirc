@@ -24,7 +24,8 @@ typedef struct in_addr IN_ADDR;
 typedef struct Client   Client;
 typedef struct Channel  Channel;
 
-bool    write_client_socket(SOCKET sock, Client *client, const char *code, const char *msg);
+bool    write_client_socket(SOCKET sock, Client *client, const char *code,
+                            const char *msg);
 bool    write_server_socket(Client *client, const char *code, const char *msg);
 bool    write_socket(SOCKET sock, const char *buffer);
 char    *read_socket(SOCKET sock);

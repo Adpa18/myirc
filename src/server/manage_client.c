@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <server.h>
 #include "server.h"
 
 char    *genNick()
@@ -57,12 +56,14 @@ bool    new_client(SOCKET sock, fd_set *rdfs, Manager *manager)
     manager->clients[manager->client_size].id = manager->client_size;
     manager->clients[manager->client_size].reg = NULL;
     ++manager->client_size;
-    DEBUG("New Client %s\n", manager->clients[manager->client_size - 1].username);
+    DEBUG("New Client %s\n",
+          manager->clients[manager->client_size - 1].username);
     return (true);
 }
 
 void    remove_client(Manager *manager, int to_remove)
 {
+    free(manager->clients[to_remove].reg);
     free(manager->clients[to_remove].username);
     close(manager->clients[to_remove].sock);
     memmove(manager->clients + to_remove, manager->clients + to_remove + 1,
@@ -81,7 +82,8 @@ void    listen_clients(fd_set *rdfs, Manager *manager)
         if ((buffer = read_socket(manager->clients[i].sock)) == NULL)
         {
             buffer = concat(2, manager->clients[i].username, " is disconnected !");
-            send_msg_to_all(&manager->clients[i], NULL, "QUIT", manager->clients[i].username);
+            send_msg_to_all(&manager->clients[i], NULL, "QUIT",
+                            manager->clients[i].username);
             remove_client(manager, i);
             DEBUG("%s\n", buffer);
         }

@@ -36,18 +36,6 @@ inline void     free_array(char **array)
     }
 }
 
-inline void     print_array(const char **array)
-{
-    int i;
-
-    i = -1;
-    while (array[++i])
-    {
-        write(1, array[i], strlen(array[i]));
-        write(1, "\n", 1);
-    }
-}
-
 int             getNbElems(const char *s, const char *delim)
 {
     int     nb_elems;

@@ -32,6 +32,9 @@ SRC_SERVER	+=  $(SRC_SERVER_DIR)server.c		    \
 		        $(SRC_SERVER_DIR)manage_client.c	\
 		        $(SRC_SERVER_DIR)manage_channel.c	\
 		        $(SRC_SERVER_DIR)cmd.c		        \
+		        $(SRC_SERVER_DIR)channel.c	        \
+		        $(SRC_SERVER_DIR)msg.c		        \
+		        $(SRC_SERVER_DIR)user.c		        \
 
 SRC_CLIENT  +=  $(SRC_CLIENT_DIR)client.c		\
                 $(SRC_CLIENT_DIR)cmd.c		    \

@@ -8,8 +8,8 @@
 ** Last update	Wed May 18 14:11:49 2016 Adrien WERY
 */
 
-#include <server.h>
 #include <string.h>
+#include "server.h"
 
 Channel *getChannel(Channel *channels, int size, const char *channel_str)
 {
@@ -44,6 +44,11 @@ void    remove_channel(Manager *manager, int to_remove)
 
 void    join_channel(Client *client, Channel *channel)
 {
+    for (int i = 0; i < client->channel_size; ++i)
+    {
+        if (client->channels[i] == channel)
+            return;
+    }
     client->channels[client->channel_size] = channel;
     channel->clients[channel->client_size] = client;
     ++client->channel_size;
@@ -52,6 +57,24 @@ void    join_channel(Client *client, Channel *channel)
 
 void    part_channel(Client *client, Channel *channel)
 {
+    for (int i = 0; i < client->channel_size; ++i)
+    {
+        if (client->channels[i] == channel)
+        {
+            memmove(client->channels + i, client->channels + i + 1,
+                    (client->channel_size - i - 1) * sizeof(Channel *));
+            break;
+        }
+    }
+    for (int i = 0; i < channel->client_size; ++i)
+    {
+        if (channel->clients[i] == client)
+        {
+            memmove(channel->clients + i, channel->clients + i + 1,
+                    (channel->client_size - i - 1) * sizeof(Client *));
+            break;
+        }
+    }
     client->channels[client->channel_size] = NULL;
     channel->clients[channel->client_size] = NULL;
     --client->channel_size;

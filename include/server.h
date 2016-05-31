@@ -65,6 +65,7 @@ void        join_channel(Client *client, Channel *channel);
 void        part_channel(Client *client, Channel *channel);
 bool        handle_cmds(Manager *manager, Client *client, const char *cmd_line);
 bool        handle_cmd(Manager *manager, Client *client, const char *cmd_line);
-void        send_msg_to_all(Client *client, Channel *channel, const char *code, const char *msg);
+void        send_msg_to_all(Client *client, Channel *channel, const char *code,
+                            const char *msg);
 
 #endif //PSU_2015_MYIRC_SERVER_H
