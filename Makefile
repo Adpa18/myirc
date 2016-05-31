@@ -42,11 +42,11 @@ SRC_CLIENT  +=  $(SRC_CLIENT_DIR)client.c		\
 
 CFLAGS		=   -W -Wall -Wextra -Werror -D_GNU_SOURCE -std=c99 -pthread
 
-CFLAGS		+=  -I./include -I./include/libs
+CFLAGS		+=  -I./include `pkg-config --cflags gtk+-3.0`
 
 LD_FLAGS	=
 
-LD_FLAGS_CLIENT =   -L./libs -Wl,-R./libs -lgtk-3 -lgdk-3 -lfontconfig -lfreetype -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lXrandr
+LD_FLAGS_CLIENT =   `pkg-config --libs gtk+-3.0`   #-L./libs -Wl,-R./libs -lgtk-3 -lgdk-3 -lfontconfig -lfreetype -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lXrandr
 
 OBJ_CLIENT	=   $(SRC_CLIENT:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 

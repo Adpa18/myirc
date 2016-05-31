@@ -110,9 +110,7 @@ void  client()
 
 #include <gtk/gtk.h>
 
-static void
-activate (GtkApplication* app,
-          gpointer        user_data)
+static void activate (GtkApplication* app, gpointer user_data)
 {
     GtkWidget *window;
 
@@ -128,8 +126,8 @@ int		main(int ac, char **av)
     GtkApplication  *app;
     int status;
 
-    app = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE);
-    g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
+    app = gtk_application_new ("IRC.Client.org", G_APPLICATION_FLAGS_NONE);
+    g_signal_connect (app, "activate", G_CALLBACK(activate), NULL);
     status = g_application_run (G_APPLICATION (app), ac, av);
     g_object_unref (app);
 
