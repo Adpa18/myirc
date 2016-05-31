@@ -42,7 +42,7 @@ SRC_CLIENT  +=  $(SRC_CLIENT_DIR)client.c		\
 
 CFLAGS		=   -W -Wall -Wextra -Werror -D_GNU_SOURCE -std=c99 -pthread
 
-CFLAGS		=   -I./include -I./include/libs
+CFLAGS		+=  -I./include -I./include/libs
 
 LD_FLAGS	=
 
