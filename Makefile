@@ -40,9 +40,13 @@ SRC_CLIENT  +=  $(SRC_CLIENT_DIR)client.c		\
                 $(SRC_CLIENT_DIR)cmd.c		    \
 
 
-CFLAGS		=   -I./include -W -Wall -Wextra -Werror -D_GNU_SOURCE -std=c99
+CFLAGS		=   -W -Wall -Wextra -Werror -D_GNU_SOURCE -std=c99 -pthread
+
+CFLAGS		=   -I./include -I./include/libs
 
 LD_FLAGS	=
+
+LD_FLAGS_CLIENT =   -L./libs -lgtk-3 -lgdk-3 -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0
 
 OBJ_CLIENT	=   $(SRC_CLIENT:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 
@@ -53,7 +57,7 @@ $(OBJ_DIR)%.o	:   $(SRC_DIR)%.c
 		  @mkdir -p $(OBJ_SERVER_DIR)
 		  @mkdir -p $(OBJ_CLIENT_DIR)
 		  @echo -e "Compiling $< to $@"
-		  @$(CC) -c $(CFLAGS) $< -o $@
+		  @$(CC) -c $(CFLAGS) $(CFLAGS_CLIENT) $< -o $@
 
 $(NAME) :   $(SERVER) $(CLIENT)
 
@@ -61,7 +65,7 @@ all     :   $(NAME)
 
 $(CLIENT)   :   $(OBJ_CLIENT)
 		  @echo -e "\033[32mLinking $@\033[00m"
-		  @$(CC) $(OBJ_CLIENT) -o $(CLIENT) $(LD_FLAGS)
+		  @$(CC) $(CFLAGS_CLIENT) $(OBJ_CLIENT) -o $(CLIENT) $(LD_FLAGS) $(LD_FLAGS_CLIENT)
 		  @echo -e "\033[33m${CLIENT} Compiled\033[00m"
 
 $(SERVER)   :   $(OBJ_SERVER)
