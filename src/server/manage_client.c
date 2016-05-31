@@ -55,7 +55,7 @@ bool    new_client(SOCKET sock, fd_set *rdfs, Manager *manager)
     manager->clients[manager->client_size].username = genNick();
     manager->clients[manager->client_size].channel_size = 0;
     manager->clients[manager->client_size].id = manager->client_size;
-    manager->clients[manager->client_size].registered = false;
+    manager->clients[manager->client_size].reg = NULL;
     ++manager->client_size;
     DEBUG("New Client %s\n", manager->clients[manager->client_size - 1].username);
     return (true);
@@ -81,7 +81,7 @@ void    listen_clients(fd_set *rdfs, Manager *manager)
         if ((buffer = read_socket(manager->clients[i].sock)) == NULL)
         {
             buffer = concat(2, manager->clients[i].username, " is disconnected !");
-            send_msg_to_all(&manager->clients[i], buffer, NULL, false);
+            send_msg_to_all(&manager->clients[i], NULL, "QUIT", manager->clients[i].username);
             remove_client(manager, i);
             DEBUG("%s\n", buffer);
         }

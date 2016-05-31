@@ -21,7 +21,7 @@
 # define EOT_CLIENT     "Client %d is disconnected !\n"
 # define KILL_SIGINT    "Server was kiled by SIGINT\n"
 
-# define WELCOME        "Welcome to my house : "
+# define WELCOME        "Welcome to my house"
 # define ERROR_MAX      "Sorry, the maximum number of connections"CRLF
 
 typedef struct Client   Client;
@@ -31,7 +31,7 @@ struct Client
 {
     unsigned int    id;
     SOCKET          sock;
-    bool            registered;
+    char            *reg;
     char            *username;
     Channel         *channels[MAX_CHANNELS];
     int             channel_size;
@@ -65,6 +65,6 @@ void        join_channel(Client *client, Channel *channel);
 void        part_channel(Client *client, Channel *channel);
 bool        handle_cmds(Manager *manager, Client *client, const char *cmd_line);
 bool        handle_cmd(Manager *manager, Client *client, const char *cmd_line);
-void        send_msg_to_all(Client *client, const char *msg, Channel *channel, bool himself);
+void        send_msg_to_all(Client *client, Channel *channel, const char *code, const char *msg);
 
 #endif //PSU_2015_MYIRC_SERVER_H

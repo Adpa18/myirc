@@ -15,13 +15,24 @@
 
 extern bool    killed;
 
-bool    write_server_socket(SOCKET sock, const char *buffer)
+bool    write_client_socket(SOCKET sock, Client *client, const char *code, const char *msg)
 {
     char    *tmp;
     bool    ret;
 
-    tmp = concat(3, ":"SERVER_NAME" ", buffer, CRLF);
+    tmp = concat(9, ":", client->username, "!~", client->reg, " ", code, " :", msg, CRLF);
     ret = write_socket(sock, tmp);
+    free(tmp);
+    return (ret);
+}
+
+bool    write_server_socket(Client *client, const char *code, const char *msg)
+{
+    char    *tmp;
+    bool    ret;
+
+    tmp = concat(6, ":"SERVER_NAME" ", code, " ", client->username, msg, CRLF);
+    ret = write_socket(client->sock, tmp);
     free(tmp);
     return (ret);
 }

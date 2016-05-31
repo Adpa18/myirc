@@ -21,7 +21,11 @@ typedef struct sockaddr_in SOCKADDR_IN;
 typedef struct sockaddr SOCKADDR;
 typedef struct in_addr IN_ADDR;
 
-bool    write_server_socket(SOCKET sock, const char *buffer);
+typedef struct Client   Client;
+typedef struct Channel  Channel;
+
+bool    write_client_socket(SOCKET sock, Client *client, const char *code, const char *msg);
+bool    write_server_socket(Client *client, const char *code, const char *msg);
 bool    write_socket(SOCKET sock, const char *buffer);
 char    *read_socket(SOCKET sock);
 SOCKET  init_server(unsigned int port);
