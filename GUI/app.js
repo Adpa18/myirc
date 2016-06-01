@@ -8,12 +8,13 @@ function createWindow () {
         {
             width: 800,
             height: 600,
-            autoHideMenuBar: true
+            autoHideMenuBar: true,
+            icon: "irc.png"
         }
     );
     mainWindow.maximize();
     mainWindow.loadURL(`file://${__dirname}/index.html`);
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
     mainWindow.on('closed', function () {
         mainWindow = null
     });

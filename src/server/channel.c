@@ -17,15 +17,15 @@ bool        irc_list(Manager *manager, Client *client, const char **arg)
 {
     char    buffer[BUFF_SIZE];
 
-    write_server_socket(client, RPL_LISTSTART, "Channel :Users  Name");
+    write_server_socket(client, RPL_LISTSTART, " :Channel Users  Name");
     for (int i = 0; i < manager->channel_size; ++i)
     {
         memset(buffer, 0, BUFF_SIZE);
-        sprintf(buffer, ":%s %d : ", manager->channels[i].name,
+        sprintf(buffer, " :%s %d : ", manager->channels[i].name,
                 manager->channels[i].client_size);
         write_server_socket(client, RPL_LIST, buffer);
     }
-    write_server_socket(client, RPL_LISTEND, "End of /LIST");
+    write_server_socket(client, RPL_LISTEND, " :End of /LIST");
     (void)arg;
     return (true);
 }
