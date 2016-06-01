@@ -58,7 +58,7 @@ void    send_cmd(SOCKET sock, const char *cmd, const char *arg)
     char    *buffer;
 
     if (arg)
-        buffer = concat(3, cmd, arg, CRLF);
+        buffer = concat(4, cmd, " ", arg, CRLF);
     else
         buffer = concat(2, cmd, CRLF);
     write_socket(sock, buffer);

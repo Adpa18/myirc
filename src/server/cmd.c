@@ -24,8 +24,11 @@ bool    handle_cmds(Manager *manager, Client *client, const char *cmd_line)
     array = split(cmd_line, "\r\n");
     for (int i = 0; i < array_len((const char **)array); ++i)
     {
-        DEBUG("cmd = %s\n", array[i]);
-        handle_cmd(manager, client, array[i]);
+        if (client->reg || i == NICK || i == USER || i == QUIT)
+        {
+            DEBUG("cmd = %s\n", array[i]);
+            handle_cmd(manager, client, array[i]);
+        }
     }
     free_array(array);
     return (true);

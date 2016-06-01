@@ -21,7 +21,7 @@ bool    irc_nick(t_client *cl, const char **arg)
         write_socket(STDOUT_FILENO, INVALID_ARG);
         return (false);
     }
-    send_cmd(cl->sock, "NICK ", arg[0]);
+    send_cmd(cl->sock, "NICK", arg[0]);
     return (true);
 }
 
@@ -35,7 +35,7 @@ bool    irc_user(t_client *cl, const char **arg)
         return (false);
     }
     buffer = merge(arg, " ");
-    send_cmd(cl->sock, "USER ", buffer);
+    send_cmd(cl->sock, "USER", buffer);
     free(buffer);
     return (true);
 }
@@ -49,7 +49,7 @@ bool    irc_help(t_client *cl, const char **arg)
 
 bool    irc_quit(t_client *cl, const char **arg)
 {
-    send_cmd(cl->sock, "QUIT ", arg[0]);
+    send_cmd(cl->sock, "QUIT", arg[0]);
     killed = true;
     return (true);
 }

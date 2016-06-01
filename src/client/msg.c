@@ -22,7 +22,7 @@ bool    irc_msg(t_client *cl, const char **arg)
         return (false);
     }
     buffer = merge(arg, " ");
-    send_cmd(cl->sock, "PRIVMSG ", buffer);
+    send_cmd(cl->sock, "PRIVMSG", buffer);
     free(buffer);
     return (true);
 }

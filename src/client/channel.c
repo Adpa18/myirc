@@ -13,7 +13,7 @@
 
 bool    irc_list(t_client *cl, const char **arg)
 {
-    (void)cl;
+    send_cmd(cl->sock, "LIST", NULL);
     (void)arg;
     return (true);
 }
@@ -25,7 +25,7 @@ bool    irc_join(t_client *cl, const char **arg)
         write_socket(STDOUT_FILENO, INVALID_ARG);
         return (false);
     }
-    send_cmd(cl->sock, "JOIN ", arg[0]);
+    send_cmd(cl->sock, "JOIN", arg[0]);
     return (true);
 }
 
@@ -36,20 +36,20 @@ bool    irc_part(t_client *cl, const char **arg)
         write_socket(STDOUT_FILENO, INVALID_ARG);
         return (false);
     }
-    send_cmd(cl->sock, "PART ", arg[0]);
+    send_cmd(cl->sock, "PART", arg[0]);
     return (true);
 }
 
 bool    irc_users(t_client *cl, const char **arg)
 {
     (void)arg;
-    send_cmd(cl->sock, "USERS", 0);
+    send_cmd(cl->sock, "USERS", NULL);
     return (true);
 }
 
 bool    irc_names(t_client *cl, const char **arg)
 {
     (void)arg;
-    send_cmd(cl->sock, "NAMES", 0);
+    send_cmd(cl->sock, "NAMES", NULL);
     return (true);
 }

@@ -63,8 +63,10 @@ bool    new_client(SOCKET sock, fd_set *rdfs, Manager *manager)
 
 void    remove_client(Manager *manager, int to_remove)
 {
-    free(manager->clients[to_remove].reg);
-    free(manager->clients[to_remove].username);
+    if (manager->clients[to_remove].reg)
+        free(manager->clients[to_remove].reg);
+    if (manager->clients[to_remove].username)
+        free(manager->clients[to_remove].username);
     close(manager->clients[to_remove].sock);
     memmove(manager->clients + to_remove, manager->clients + to_remove + 1,
             (manager->client_size - to_remove - 1) * sizeof(Client));
