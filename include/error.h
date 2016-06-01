@@ -28,6 +28,7 @@
 # define ERR_NOTEXTTOSEND	    "412"
 
 //USER
+# define ERR_NOTREGISTERED      "451"
 # define ERR_ALREADYREGISTERED  "462"
 
 // JOIN

@@ -24,11 +24,8 @@ bool    handle_cmds(Manager *manager, Client *client, const char *cmd_line)
     array = split(cmd_line, "\r\n");
     for (int i = 0; i < array_len((const char **)array); ++i)
     {
-        if (client->reg || i == NICK || i == USER || i == QUIT)
-        {
-            DEBUG("cmd = %s\n", array[i]);
-            handle_cmd(manager, client, array[i]);
-        }
+        DEBUG("cmd = %s\n", array[i]);
+        handle_cmd(manager, client, array[i]);
     }
     free_array(array);
     return (true);
@@ -46,11 +43,18 @@ bool    handle_cmd(Manager *manager, Client *client, const char *cmd_line)
     {
         if (strcasecmp(array[0], cmdlist_str[i]))
             continue;
-        ret = cmdlist_func[i](manager, client, (const char **)(&array[1]));
+        if (client->reg || i == NICK || i == USER || i == QUIT)
+            ret = cmdlist_func[i](manager, client, (const char **)(&array[1]));
+        else
+        {
+            write_server_socket(client, ERR_NOTREGISTERED,
+                                " :You have not registered");
+            ret = false;
+        }
+
         free_array(array);
         return (ret);
     }
     write_server_socket(client, ERR_UNKNOWCMD, "UnknowCMD");
-    free_array(array);
-    return (true);
+    return (free_array(array), true);
 }
