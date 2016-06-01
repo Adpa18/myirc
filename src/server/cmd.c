@@ -55,6 +55,6 @@ bool    handle_cmd(Manager *manager, Client *client, const char *cmd_line)
         free_array(array);
         return (ret);
     }
-    write_server_socket(client, ERR_UNKNOWCMD, "UnknowCMD");
+    write_server_socket(client, ERR_UNKNOWCMD, " :UnknowCMD");
     return (free_array(array), true);
 }

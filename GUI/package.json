@@ -1,0 +1,14 @@
+{
+  "name": "irc-gui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "electron app.js"
+  },
+  "author": "wery_a",
+  "license": "ISC",
+  "devDependencies": {
+    "electron-prebuilt": "*"
+  }
+}

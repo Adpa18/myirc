@@ -92,7 +92,7 @@ bool        irc_names(Manager *manager, Client *client, const char **arg)
     if (arg[0])
     {
         if ((channel = getChannel(manager->channels,
-                                  manager->client_size, arg[0])))
+                                  manager->channel_size, arg[0])))
         {
             buffer = concat(3, " = ", channel->name, " :");
             for (int i = 0; i < manager->client_size; ++i)

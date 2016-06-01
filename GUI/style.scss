@@ -1,0 +1,51 @@
+$back_lighter : #616161;
+$back_light : #424242;
+$back : #212121;
+$border : #BDBDBD;
+$font-color: #FAFAFA;
+
+html {
+  height: 100%;
+  body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: $back_light;
+    color: $font-color;
+  }
+}
+
+#container {
+  display: flex;
+  height: 100%;
+  #left {
+    background: $back_lighter;
+    width: 300px;
+    border-right: 1px solid $border;
+  }
+  #main {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    #log {
+      width: 100%;
+      height: 100%;
+      resize: none;
+      border: 0;
+      padding: 0;
+      background: $back_light;
+      border-bottom: 1px solid $border;
+      color: $font-color;
+      outline: none;
+    }
+    #bottomBar {
+      width: 100%;
+      height: 50px;
+      outline: none;
+      padding: 0;
+      border: 0;
+      background: white;
+      font-size: 40px;
+    }
+  }
+}
