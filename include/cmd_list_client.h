@@ -24,6 +24,7 @@ bool    irc_list(t_client *cl, const char **arg);
 bool    irc_join(t_client *cl, const char **arg);
 bool    irc_part(t_client *cl, const char **arg);
 bool    irc_users(t_client *cl, const char **arg);
+bool    irc_names(t_client *cl, const char **arg);
 bool    irc_msg(t_client *cl, const char **arg);
 bool    irc_send_file(t_client *cl, const char **arg);
 bool    irc_accept_file(t_client *cl, const char **arg);

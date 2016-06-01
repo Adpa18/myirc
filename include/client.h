@@ -30,16 +30,6 @@ typedef struct	s_client
     int             max_fd;
 }		            t_client;
 
-int	open_socket();
-int	close_socket(int fd_sock);
-int	connect_socket(int fd_sock, int port, char *ip);
-char	*recv_cmd(int fd_sock);
-int	my_error(char *, int);
-int	my_server(t_client *);
-int	my_send_file(t_client *);
-int	my_accept_file(t_client *);
-int	my_help(t_client *);
-int	my_exit(t_client *);
-int	my_free(void *, int);
+bool    handle_cmd(t_client *cl);
 
 #endif /* !CLIENT_H_ */

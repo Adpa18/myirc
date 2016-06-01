@@ -36,17 +36,18 @@ SRC_SERVER	+=  $(SRC_SERVER_DIR)server.c		    \
 		        $(SRC_SERVER_DIR)msg.c		        \
 		        $(SRC_SERVER_DIR)user.c		        \
 
-SRC_CLIENT  +=  $(SRC_CLIENT_DIR)client.c		\
-                $(SRC_CLIENT_DIR)cmd.c		    \
+SRC_CLIENT  +=  $(SRC_CLIENT_DIR)client.c		    \
+                $(SRC_CLIENT_DIR)cmd.c		        \
+                $(SRC_CLIENT_DIR)channel.c	        \
+                $(SRC_CLIENT_DIR)user.c		        \
+                $(SRC_CLIENT_DIR)msg.c		        \
 
 
-CFLAGS		=   -W -Wall -Wextra -Werror -D_GNU_SOURCE -std=c99 -pthread
+CFLAGS		=   -W -Wall -Wextra -Werror -D_GNU_SOURCE -std=c99
 
-CFLAGS		+=  -I./include `pkg-config --cflags gtk+-3.0`
+CFLAGS		+=  -I./include
 
 LD_FLAGS	=
-
-LD_FLAGS_CLIENT =   `pkg-config --libs gtk+-3.0`   #-L./libs -Wl,-R./libs -lgtk-3 -lgdk-3 -lfontconfig -lfreetype -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lXrandr
 
 OBJ_CLIENT	=   $(SRC_CLIENT:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 
@@ -57,7 +58,7 @@ $(OBJ_DIR)%.o	:   $(SRC_DIR)%.c
 		  @mkdir -p $(OBJ_SERVER_DIR)
 		  @mkdir -p $(OBJ_CLIENT_DIR)
 		  @echo -e "Compiling $< to $@"
-		  @$(CC) -c $(CFLAGS) $(CFLAGS_CLIENT) $< -o $@
+		  @$(CC) -c $(CFLAGS) $< -o $@
 
 $(NAME) :   $(SERVER) $(CLIENT)
 
@@ -65,7 +66,7 @@ all     :   $(NAME)
 
 $(CLIENT)   :   $(OBJ_CLIENT)
 		  @echo -e "\033[32mLinking $@\033[00m"
-		  @$(CC) $(CFLAGS_CLIENT) $(OBJ_CLIENT) -o $(CLIENT) $(LD_FLAGS) $(LD_FLAGS_CLIENT)
+		  @$(CC) $(CFLAGS_CLIENT) $(OBJ_CLIENT) -o $(CLIENT) $(LD_FLAGS)
 		  @echo -e "\033[33m${CLIENT} Compiled\033[00m"
 
 $(SERVER)   :   $(OBJ_SERVER)

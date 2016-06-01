@@ -11,10 +11,47 @@
 #include <socket.h>
 #include <arpa/inet.h>
 #include <pwd.h>
-#include "cmd_list_client.h"
+#include <string.h>
+#include "cmd_client.h"
 #include "array.h"
 
 extern bool killed;
+
+COMMAND getCMD(const char *cmd_line)
+{
+    if (cmd_line[0] == '\n')
+        return (false);
+    for (unsigned  int i = 0; i < sizeof(cmdlist_str) / sizeof(char *); ++i)
+    {
+        if (strcasecmp(cmd_line, cmdlist_str[i]) == 0)
+        {
+            return (i);
+        }
+    }
+    return (NO_CMD);
+}
+
+bool  handle_cmd(t_client *cl)
+{
+    COMMAND   cmd;
+    char      **array;
+    char      *buffer;
+    bool      ret;
+
+    ret = true;
+    if ((buffer = read_socket(0)) == NULL || buffer[0] == '\n')
+        return (false);
+    if ((array = split(buffer, " ")) == NULL)
+        return (false);
+    if ((cmd = getCMD(array[0])) == NO_CMD && cl->isConnected)
+        write_socket(cl->sock, buffer);
+    else if (cl->isConnected || cmd == SERVER || cmd == HELP)
+        ret = cmdlist_func[cmd](cl, (const char **)&array[1]);
+    else
+        write_socket(STDOUT_FILENO, NEED_CO);
+    free(buffer);
+    return (ret);
+}
 
 void    send_cmd(SOCKET sock, const char *cmd, const char *arg)
 {
@@ -66,113 +103,5 @@ bool    irc_server(t_client *cl, const char **arg)
     buffer = concat(3, "Connected to ", arg[0], "\n");
     write_socket(STDOUT_FILENO, buffer);
     free(buffer);
-
-    return (true);
-}
-
-bool    irc_nick(t_client *cl, const char **arg)
-{
-    if (!arg || !arg[0])
-    {
-        write_socket(STDOUT_FILENO, INVALID_ARG);
-        return (false);
-    }
-    send_cmd(cl->sock, "NICK ", arg[0]);
-    return (true);
-}
-
-bool    irc_user(t_client *cl, const char **arg)
-{
-    char    *buffer;
-
-    if (!arg || !arg[0])
-    {
-        write_socket(STDOUT_FILENO, INVALID_ARG);
-        return (false);
-    }
-    buffer = merge(arg, " ");
-    send_cmd(cl->sock, "USER ", buffer);
-    free(buffer);
-    return (true);
-}
-
-bool    irc_msg(t_client *cl, const char **arg)
-{
-    char    *buffer;
-
-    if (!arg || !arg[0])
-    {
-        write_socket(STDOUT_FILENO, INVALID_ARG);
-        return (false);
-    }
-    buffer = merge(arg, " ");
-    send_cmd(cl->sock, "PRIVMSG ", buffer);
-    free(buffer);
-    return (true);
-}
-
-
-bool    irc_list(t_client *cl, const char **arg)
-{
-    (void)cl;
-    (void)arg;
-    return (true);
-}
-
-
-bool    irc_join(t_client *cl, const char **arg)
-{
-    if (!arg || !arg[0])
-    {
-        write_socket(STDOUT_FILENO, INVALID_ARG);
-        return (false);
-    }
-    send_cmd(cl->sock, "JOIN ", arg[0]);
-    return (true);
-}
-
-bool    irc_part(t_client *cl, const char **arg)
-{
-    if (!arg || !arg[0])
-    {
-        write_socket(STDOUT_FILENO, INVALID_ARG);
-        return (false);
-    }
-    send_cmd(cl->sock, "PART ", arg[0]);
-    return (true);
-}
-
-bool    irc_users(t_client *cl, const char **arg)
-{
-    (void)arg;
-    send_cmd(cl->sock, "USERS", 0);
-    return (true);
-}
-
-bool    irc_send_file(t_client *cl, const char **arg)
-{
-    (void)cl;
-    (void)arg;
-    return (true);
-}
-
-bool    irc_accept_file(t_client *cl, const char **arg)
-{
-    (void)cl;
-    (void)arg;
-    return (true);
-}
-
-bool    irc_help(t_client *cl, const char **arg)
-{
-    (void)cl;
-    (void)arg;
-    return (true);
-}
-
-bool    irc_quit(t_client *cl, const char **arg)
-{
-    send_cmd(cl->sock, "QUIT ", arg[0]);
-    killed = true;
     return (true);
 }
