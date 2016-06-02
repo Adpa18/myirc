@@ -101,7 +101,7 @@ function getUser(data) {
 }
 
 function joinChannel(data) {
-
+    
 }
 
 function getChannel(data) {

@@ -48,13 +48,13 @@ bool        irc_msg(Manager *manager, Client *client, const char **arg)
     {
         if (!(channel = getChannel(manager->channels,
                                    manager->channel_size, arg[0])))
-            return (free(buffer), write_socket(client->sock, ERR_NOSUCHNICK),
-                    false);
+            return (free(buffer), write_server_socket(client,ERR_NOSUCHNICK,
+                                           " :No Such Channel"), false);
         send_msg_to_all(client, channel, buffer, arg[1]);
     }
     else if (!(client_dest = getClient(manager, arg[0])))
-        return (free(buffer), write_socket(client->sock, ERR_NOSUCHNICK),
-                false);
+        return (free(buffer), write_server_socket(client, ERR_NOSUCHNICK,
+                                                  " :No such Nick"), false);
     else
         write_client_socket(client_dest->sock, client, buffer, arg[1]);
     return (free(buffer), true);
