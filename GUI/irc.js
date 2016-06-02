@@ -53,7 +53,7 @@ function parseData(data) {
 
 function checkKeyCode(data) {
     let keycode = data.match(/.* (\d{3}) .*/);
-    if (!keycode)
+    if (!keycode || !keycode[1])
         return (false);
     switch (parseInt(keycode[1])) {
         case 001:
@@ -77,7 +77,14 @@ function checkKeyCode(data) {
 }
 
 function checkCMD(data) {
-    
+    let cmd = data.match(/.* (.*) :.*/);
+    if (!cmd || !cmd[1])
+        return (false);
+    switch (cmd[1]) {
+        case "JOIN":
+            joinChannel(cmd[1]);
+            break;
+    }
 }
 
 function init(data) {
@@ -91,6 +98,10 @@ function getUser(data) {
     if (data) {
         config.users.push(data[1]);
     }
+}
+
+function joinChannel(data) {
+
 }
 
 function getChannel(data) {

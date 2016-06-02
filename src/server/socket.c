@@ -19,12 +19,16 @@ bool    write_client_socket(SOCKET sock, Client *client, const char *code,
                             const char *msg)
 {
     char    *tmp;
+    char    *name;
     bool    ret;
 
-    tmp = concat(9, ":", client->username, "!~", client->reg, " ",
+    name = (client->reg) ? client->reg : concat(2, client->username, "@*");
+    tmp = concat(9, ":", client->username, "!~", name, " ",
                  code, " :", msg, CRLF);
     ret = write_socket(sock, tmp);
     free(tmp);
+    if (!client->reg)
+        free (name);
     return (ret);
 }
 

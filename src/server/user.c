@@ -39,6 +39,7 @@ bool        irc_nick(Manager *manager, Client *client, const char **arg)
         free(client->username);
     client->username = strdup(arg[0]);
     send_msg_to_all(client, NULL, "NICK", client->username);
+    write_client_socket(client->sock, client, "NICK", client->username);
     return (true);
 }
 
