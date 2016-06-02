@@ -86,11 +86,12 @@ inline char     *merge(const char **array, const char *delim)
     for (int i = 0; i < array_len(array); ++i)
     {
         tmp = dest;
-        if (dest)
-            dest = concat(3, dest, delim, array[i]);
-        else
+        if (!dest && array[i])
+            dest = strdup(array[i]);
+        else if (!delim && dest && array[i])
             dest = concat(2, dest, array[i]);
-
+        else if (dest && delim && array[i])
+            dest = concat(3, dest, delim, array[i]);
         if (tmp)
             free(tmp);
     }

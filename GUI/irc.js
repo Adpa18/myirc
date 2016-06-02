@@ -44,29 +44,40 @@ function parseData(data) {
         // console.log("line =>", data[i]);
         if (!data[i])
             continue;
-        let keycode = data[i].match(/.* (\d{3}) .*/);
-        if (!keycode)
-            continue;
-        switch (parseInt(keycode[1])) {
-            case 001:
-                init(data[i].match(/:(.*) 001 (.*) :/));
-                break;
-            case 392:
-                config.users = [];
-                break;
-            case 393:
-                getUser(data[i].match(/.*393.*:(.*)/));
-                break;
-            case 321:
-                config.channels = [];
-                channelsDOM.innerHTML = "";
-                break;
-            case 322:
-                getChannel(data[i].match(/.*322.*?:(.*) (\d)/));
-                break;
+        if (!checkKeyCode(data[i])) {
+            checkCMD(data[i]);
         }
     }
     console.log(config);
+}
+
+function checkKeyCode(data) {
+    let keycode = data.match(/.* (\d{3}) .*/);
+    if (!keycode)
+        return (false);
+    switch (parseInt(keycode[1])) {
+        case 001:
+            init(data.match(/:(.*) 001 (.*) :/));
+            break;
+        case 392:
+            config.users = [];
+            break;
+        case 393:
+            getUser(data.match(/.*393.*:(.*)/));
+            break;
+        case 321:
+            config.channels = [];
+            channelsDOM.innerHTML = "";
+            break;
+        case 322:
+            getChannel(data.match(/.*322.*?:(.*) (\d)/));
+            break;
+    }
+    return (true);
+}
+
+function checkCMD(data) {
+    
 }
 
 function init(data) {
