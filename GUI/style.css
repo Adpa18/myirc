@@ -21,7 +21,8 @@ html {
       height: 50px;
       font-size: 30px;
       line-height: 50px;
-      border-bottom: 1px solid #BDBDBD; }
+      border-bottom: 1px solid #BDBDBD;
+      margin-left: 10px; }
       #container #left .channel .nb_channel {
         color: red;
         float: right;
