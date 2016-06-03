@@ -9,6 +9,7 @@
 */
 
 #include <stdlib.h>
+#include <array.h>
 #include "error.h"
 #include "server.h"
 
@@ -50,13 +51,13 @@ bool        irc_msg(Manager *manager, Client *client, const char **arg)
                                    manager->channel_size, arg[0])))
             return (free(buffer), write_server_socket(client, ERR_NOSUCHNICK,
                                                   " :No such Channel"), false);
-        send_msg_to_all(client, channel, buffer, arg[1]);
+        send_msg_to_all(client, channel, buffer, merge(&arg[1], " "));
     }
     else if (!(client_dest = getClient(manager, arg[0])))
         return (free(buffer), write_server_socket(client, ERR_NOSUCHNICK,
                                                   " :No such Nick"), false);
     else
-        write_client_socket(client_dest->sock, client, buffer, arg[1]);
+        write_client_socket(client_dest->sock, client, buffer, merge(&arg[1], " "));
     return (free(buffer), true);
 }
 

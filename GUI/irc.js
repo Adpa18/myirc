@@ -1,15 +1,16 @@
 const spawn = require('child_process').spawn;
-const clientIRC = spawn('./client');
+const clientIRC = spawn('../client');
 
 let config = {
     nickName : "",
     serverName : "",
+    currentChannel: "",
     users: [],
     channels: [],
-    channels_msg: [{
+    msgs: [[{
         author: "",
         msg: ""
-    }]
+    }]]
 };
 
 let logDOM;
@@ -24,6 +25,7 @@ window.onload = function () {
     logDOM = document.getElementById("log");
     inputDOM = document.getElementById("bottomBar");
     channelsDOM = document.getElementById("left");
+    msgsDOM = document.getElementById("msgs");
 
     clientIRC.stdout.on('data', (data) => {
         parseData(data);
@@ -40,6 +42,10 @@ window.onload = function () {
 }
 
 function sendCMD(cmd) {
+    if (cmd[0] != "/" && config.currentChannel) {
+        appendMsg(config.nickName, cmd);
+        cmd = "/MSG " + config.currentChannel + " " + cmd;
+    }
     console.log("Sending => " + cmd);
     clientIRC.stdin.write(cmd);
 }
@@ -72,8 +78,7 @@ function checkKeyCode(data) {
             getUser(data.match(/.*393.*:(.*)/));
             break;
         case 321:
-            config.channels = [];
-            channelsDOM.innerHTML = "";
+            initLeft();
             break;
         case 322:
             let channel = data.match(/.*322.*?:(.*) (\d)/);
@@ -84,12 +89,15 @@ function checkKeyCode(data) {
 }
 
 function checkCMD(data) {
-    let cmd = data.match(/.* (.*) :.*/);
+    let cmd = data.match(/ ([^ ]+) /);
     if (!cmd || !cmd[1])
         return (false);
     switch (cmd[1]) {
         case "JOIN":
             joinChannel(data.match(/:(.*)!.* :(.*)/));
+            break;
+        case "PRIVMSG":
+            recvMsg(data.match(/:(.*)!~.* [^ ]+ (.*) :(.*)/));
             break;
     }
     return (true);
@@ -109,14 +117,39 @@ function getUser(data) {
 }
 
 function joinCMD(name) {
-    sendCMD("/JOIN " + name);
+    if (name[0] == "#")
+        sendCMD("/JOIN " + name);
+    msgsDOM.innerHTML = "";
+    config.currentChannel = name;
+    for (let msg in config.msgs[name]) {
+        appendMsg(msg.author, msg.msg);
+    }
 }
 
 function joinChannel(data) {
-    // let join = data.match(/:(.*)!.* :(.*)/);
-    // if (join[1] == config.nickName)
-    //     addChannel(join[2], 1);
+    if (data[1] == config.nickName && data[2])
+        config.currentChannel = data[2];
     sendCMD("/LIST");
+}
+
+function recvMsg(data) {
+    console.log(data);
+    if (!data || !data[1] || !data[2] || !data[3])
+        return;
+
+    if (!config.msgs[data[2]])
+        config.msgs[data[2]] = [];
+    config.msgs[data[2]].push({author: data[1], msg: data[3]});
+    if (data[2] == config.currentChannel)
+        appendMsg(data[1], data[3]);
+}
+
+function appendMsg(author, msg) {
+    msgsDOM.innerHTML = msgsDOM.innerHTML
+        + "<p class='msg'>"
+        + "<span class='author'>" + author + "</span>"
+        + msg
+        + "</p>";
 }
 
 function addChannel(name, nb) {
@@ -128,6 +161,19 @@ function addChannel(name, nb) {
             + "<div class=\"channel\" onclick=\'joinCMD(\""+name+"\");\'>"
             + name
             + "<span class=\"nb_channel\">" + nb + "</span>"
+            + "</div>";
+    }
+}
+
+function initLeft() {
+    config.channels = [];
+    channelsDOM.innerHTML = "";
+    for (let i = 0; i < config.users.length; ++i) {
+        if (config.users[i] == config.nickName)
+            continue;
+        channelsDOM.innerHTML = channelsDOM.innerHTML
+            + "<div class=\"channel_user\" onclick=\'joinCMD(\""+config.users[i]+"\");\'>"
+            + config.users[i]
             + "</div>";
     }
 }

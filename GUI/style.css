@@ -16,8 +16,7 @@ html {
     border-right: 1px solid #BDBDBD;
     overflow-y: auto;
     overflow-x: hidden; }
-    #container #left .channel {
-      background: #424242;
+    #container #left .channel, #container #left .channel_user {
       width: 100%;
       text-align: center;
       height: 50px;
@@ -25,13 +24,17 @@ html {
       line-height: 50px;
       border-bottom: 1px solid #BDBDBD;
       border-right: 1px solid #BDBDBD; }
-      #container #left .channel:hover {
+      #container #left .channel:hover, #container #left .channel_user:hover {
         cursor: pointer;
         background: #616161; }
-      #container #left .channel .nb_channel {
+      #container #left .channel .nb_channel, #container #left .channel_user .nb_channel {
         color: red;
         float: right;
         margin-right: 15px; }
+    #container #left .channel {
+      background: #424242; }
+    #container #left .channel_user {
+      background: #00422A; }
   #container #main {
     width: 100%;
     display: flex;
@@ -42,7 +45,7 @@ html {
       width: 100%;
       height: 100%;
       border-bottom: 1px solid #BDBDBD; }
-      #container #main #logs #log, #container #main #logs #msg {
+      #container #main #logs #log, #container #main #logs #msgs {
         width: 50%;
         height: 100%;
         resize: none;
@@ -52,9 +55,15 @@ html {
         outline: none; }
       #container #main #logs #log {
         background: #212121; }
-      #container #main #logs #msg {
+      #container #main #logs #msgs {
         border-right: 1px solid #BDBDBD;
         background: #424242; }
+        #container #main #logs #msgs .msg {
+          font-size: 20px;
+          margin-left: 20px; }
+          #container #main #logs #msgs .msg .author {
+            color: #0c5666;
+            margin-right: 20px; }
     #container #main #bottomBar {
       width: 100%;
       height: 50px;
