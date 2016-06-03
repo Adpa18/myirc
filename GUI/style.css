@@ -13,17 +13,21 @@ html {
   #container #left {
     background: #616161;
     width: 300px;
-    border-right: 1px solid #BDBDBD; }
+    border-right: 1px solid #BDBDBD;
+    overflow-y: auto;
+    overflow-x: hidden; }
     #container #left .channel {
-      background: blue;
+      background: #424242;
       width: 100%;
-      text-align: left;
+      text-align: center;
       height: 50px;
       font-size: 30px;
       line-height: 50px;
       border-bottom: 1px solid #BDBDBD;
-      padding-left: 10px;
       border-right: 1px solid #BDBDBD; }
+      #container #left .channel:hover {
+        cursor: pointer;
+        background: #616161; }
       #container #left .channel .nb_channel {
         color: red;
         float: right;

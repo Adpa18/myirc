@@ -5,15 +5,20 @@ let config = {
     nickName : "",
     serverName : "",
     users: [],
-    channels: [{
-        name: "",
-        nb_users: 0
+    channels: [],
+    channels_msg: [{
+        author: "",
+        msg: ""
     }]
 };
 
 let logDOM;
 let inputDOM;
 let channelsDOM;
+
+window.onunload = function () {
+    clientIRC.kill();
+}
 
 window.onload = function () {
     logDOM = document.getElementById("log");
@@ -35,6 +40,7 @@ window.onload = function () {
 }
 
 function sendCMD(cmd) {
+    console.log("Sending => " + cmd);
     clientIRC.stdin.write(cmd);
 }
 
@@ -70,7 +76,8 @@ function checkKeyCode(data) {
             channelsDOM.innerHTML = "";
             break;
         case 322:
-            getChannel(data.match(/.*322.*?:(.*) (\d)/));
+            let channel = data.match(/.*322.*?:(.*) (\d)/);
+            addChannel(channel[1], channel[2]);
             break;
     }
     return (true);
@@ -82,9 +89,10 @@ function checkCMD(data) {
         return (false);
     switch (cmd[1]) {
         case "JOIN":
-            joinChannel(cmd[1]);
+            joinChannel(data.match(/:(.*)!.* :(.*)/));
             break;
     }
+    return (true);
 }
 
 function init(data) {
@@ -100,20 +108,26 @@ function getUser(data) {
     }
 }
 
-function joinChannel(data) {
-    
+function joinCMD(name) {
+    sendCMD("/JOIN " + name);
 }
 
-function getChannel(data) {
-    if (data) {
-        config.channels.push({
-            name : data[1],
-            nb_users: data[2]
-        });
+function joinChannel(data) {
+    // let join = data.match(/:(.*)!.* :(.*)/);
+    // if (join[1] == config.nickName)
+    //     addChannel(join[2], 1);
+    sendCMD("/LIST");
+}
+
+function addChannel(name, nb) {
+    if (name && !config.channels[name]) {
+        if (!nb)
+            nb = 1;
+        config.channels[name] = nb;
         channelsDOM.innerHTML = channelsDOM.innerHTML
-            + "<div class=\"channel\">"
-            + data[1]
-            + "<span class=\"nb_channel\">" + data[2] + "</span>"
+            + "<div class=\"channel\" onclick=\'joinCMD(\""+name+"\");\'>"
+            + name
+            + "<span class=\"nb_channel\">" + nb + "</span>"
             + "</div>";
     }
 }

@@ -22,16 +22,21 @@ html {
     background: $back_lighter;
     width: 300px;
     border-right: 1px solid $border;
+    overflow-y: auto;
+    overflow-x: hidden;
     .channel {
-      background: blue;
+      background: $back_light;
       width: 100%;
-      text-align: left;
+      text-align: center;
       height: 50px;
       font-size: 30px;
       line-height: 50px;
       border-bottom: 1px solid $border;
-      padding-left: 10px;
       border-right: 1px solid $border;
+      &:hover {
+        cursor: pointer;
+        background: $back_lighter;
+      }
       .nb_channel {
         color: red;
         float: right;

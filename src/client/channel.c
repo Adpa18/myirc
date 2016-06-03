@@ -49,7 +49,6 @@ bool    irc_users(t_client *cl, const char **arg)
 
 bool    irc_names(t_client *cl, const char **arg)
 {
-    (void)arg;
-    send_cmd(cl->sock, "NAMES", NULL);
+    send_cmd(cl->sock, "NAMES", arg[0]);
     return (true);
 }
