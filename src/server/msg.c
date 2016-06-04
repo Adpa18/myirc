@@ -36,7 +36,7 @@ bool        irc_msg(Manager *manager, Client *client, const char **arg)
 {
     char    *buffer;
     Channel *channel;
-    Client  *client_dest;
+    Client  *cl_dest;
 
     if (!arg[0])
         return (write_server_socket(client, ERR_NORECIPIENT,
@@ -53,11 +53,11 @@ bool        irc_msg(Manager *manager, Client *client, const char **arg)
                                                   " :No such Channel"), false);
         send_msg_to_all(client, channel, buffer, merge(&arg[1], " "));
     }
-    else if (!(client_dest = getClient(manager, arg[0])))
+    else if (!(cl_dest = getClient(manager, arg[0])))
         return (free(buffer), write_server_socket(client, ERR_NOSUCHNICK,
                                                   " :No such Nick"), false);
     else
-        write_client_socket(client_dest->sock, client, buffer, merge(&arg[1], " "));
+        write_client_socket(cl_dest->sock, client, buffer, merge(&arg[1], " "));
     return (free(buffer), true);
 }
 

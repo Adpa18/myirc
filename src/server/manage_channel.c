@@ -9,6 +9,7 @@
 */
 
 #include <string.h>
+#include <server.h>
 #include "server.h"
 
 Channel *getChannel(Channel *channels, int size, const char *channel_str)
@@ -40,6 +41,7 @@ void    remove_channel(Manager *manager, int to_remove)
     memset(manager->channels[to_remove].name, 0, 200);
     memmove(manager->channels + to_remove, manager->channels + to_remove + 1,
             (manager->channel_size - to_remove - 1) * sizeof(Channel));
+    --manager->channel_size;
 }
 
 void    join_channel(Client *client, Channel *channel)
@@ -63,7 +65,7 @@ void    part_channel(Client *client, Channel *channel)
         {
             memmove(client->channels + i, client->channels + i + 1,
                     (client->channel_size - i - 1) * sizeof(Channel *));
-            break;
+            --client->channel_size;
         }
     }
     for (int i = 0; i < channel->client_size; ++i)
@@ -72,11 +74,9 @@ void    part_channel(Client *client, Channel *channel)
         {
             memmove(channel->clients + i, channel->clients + i + 1,
                     (channel->client_size - i - 1) * sizeof(Client *));
-            break;
+            --channel->client_size;
         }
     }
     client->channels[client->channel_size] = NULL;
     channel->clients[channel->client_size] = NULL;
-    --client->channel_size;
-    --channel->client_size;
 }

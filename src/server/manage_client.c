@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <server.h>
 #include "server.h"
 
 char    *genNick()
@@ -68,9 +69,13 @@ void    remove_client(Manager *manager, int to_remove)
     if (manager->clients[to_remove].username)
         free(manager->clients[to_remove].username);
     close(manager->clients[to_remove].sock);
+    for (int i = 0; i < manager->channel_size; ++i)
+    {
+        part_channel(&manager->clients[to_remove], &manager->channels[i]);
+    }
     memmove(manager->clients + to_remove, manager->clients + to_remove + 1,
             (manager->client_size - to_remove - 1) * sizeof(Client));
-    --manager->client_size;
+        --manager->client_size;
 }
 
 void    listen_clients(fd_set *rdfs, Manager *manager)

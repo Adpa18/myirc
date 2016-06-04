@@ -43,7 +43,7 @@ window.onload = function () {
 
 function sendCMD(cmd) {
     if (cmd[0] != "/" && config.currentChannel) {
-        appendMsg(config.nickName, cmd);
+        appendMsg(config.currentChannel, config.nickName, cmd);
         cmd = "/MSG " + config.currentChannel + " " + cmd;
     }
     console.log("Sending => " + cmd);
@@ -121,8 +121,10 @@ function joinCMD(name) {
         sendCMD("/JOIN " + name);
     msgsDOM.innerHTML = "";
     config.currentChannel = name;
-    for (let msg in config.msgs[name]) {
-        appendMsg(msg.author, msg.msg);
+    if (!config.msgs[name])
+        return;
+    for (let i = 0; i < config.msgs[name].length; ++i) {
+        printMsg(config.msgs[name][i].author, config.msgs[name][i].msg);
     }
 }
 
@@ -136,15 +138,21 @@ function recvMsg(data) {
     console.log(data);
     if (!data || !data[1] || !data[2] || !data[3])
         return;
-
-    if (!config.msgs[data[2]])
-        config.msgs[data[2]] = [];
-    config.msgs[data[2]].push({author: data[1], msg: data[3]});
-    if (data[2] == config.currentChannel)
-        appendMsg(data[1], data[3]);
+    appendMsg(data[2], data[1], data[3]);
 }
 
-function appendMsg(author, msg) {
+function appendMsg(name, author, msg) {
+    if (!name || !author || !msg)
+        return;
+    if (!config.msgs[name])
+        config.msgs[name] = [];
+    config.msgs[name].push({author: author, msg: msg});
+    if (name != config.currentChannel)
+        return;
+    printMsg(author, msg);
+}
+
+function printMsg(author, msg) {
     msgsDOM.innerHTML = msgsDOM.innerHTML
         + "<p class='msg'>"
         + "<span class='author'>" + author + "</span>"

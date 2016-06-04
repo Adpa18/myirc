@@ -10,6 +10,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <server.h>
 #include "error.h"
 #include "server.h"
 
@@ -18,6 +19,14 @@ bool        irc_list(Manager *manager, Client *client, const char **arg)
     char    buffer[BUFF_SIZE];
 
     write_server_socket(client, RPL_LISTSTART, " :Channel Users  Name");
+    for (int i = 0; i < manager->channel_size; ++i)
+    {
+        if (manager->channels[i].client_size == 0)
+        {
+            remove_channel(manager, i);
+            --i;
+        }
+    }
     for (int i = 0; i < manager->channel_size; ++i)
     {
         memset(buffer, 0, BUFF_SIZE);
