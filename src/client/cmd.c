@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Wed Apr 20 21:54:53 2016 Adrien WERY
-** Last update	Wed May 18 14:10:10 2016 Adrien WERY
+** Last update	Sun Jun 05 16:08:06 2016 Axel Vencatareddy
 */
 
 #include <socket.h>
@@ -80,28 +80,29 @@ void    init_connection(t_client *cl)
 
 bool    irc_server(t_client *cl, const char **arg)
 {
-    SOCKADDR_IN     s_in;
-    char            *buffer;
-    struct timeval  t;
+  SOCKADDR_IN     s_in;
+  char            *buffer;
+  struct timeval  t;
+  char            **tab;
 
-    t.tv_sec = 30;
-    t.tv_usec = 0;
-    if ((cl->sock = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-    {
-        perror("socket");
-        return (false);
-    }
-    s_in.sin_family = AF_INET;
-    s_in.sin_port = htons((arg[1]) ? atoi(arg[1]) : 6667);
-    s_in.sin_addr.s_addr = inet_addr(getIP(arg[0]));
-    setsockopt(cl->sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&t, sizeof(t));
-    if (connect(cl->sock, (SOCKADDR *)&s_in, sizeof(s_in)) == -1)
-        return (perror("conect"), false);
-    cl->max_fd = cl->sock > cl->max_fd ? cl->sock : cl->max_fd;
-    cl->isConnected = true;
-    init_connection(cl);
-    buffer = concat(3, "Connected to ", arg[0], "\n");
-    write_socket(STDOUT_FILENO, buffer);
-    free(buffer);
-    return (true);
+  t.tv_sec = 30;
+  t.tv_usec = 0;
+  if ((cl->sock = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+    return (perror("socket"), false);
+  tab = split(arg[0], ":");
+  s_in.sin_family = AF_INET;
+  s_in.sin_port = htons(tab[1] ? atoi(tab[1]) :
+                        (arg[1] ? atoi(arg[1]) : 6667));
+  s_in.sin_addr.s_addr = inet_addr(getIP(tab[0]));
+  setsockopt(cl->sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&t, sizeof(t));
+  if (connect(cl->sock, (SOCKADDR *)&s_in, sizeof(s_in)) == -1)
+      return (perror("conect"), false);
+  cl->max_fd = cl->sock > cl->max_fd ? cl->sock : cl->max_fd;
+  cl->isConnected = true;
+  init_connection(cl);
+  buffer = concat(3, "Connected to ", tab[0], "\n");
+  write_socket(STDOUT_FILENO, buffer);
+  free_array(tab);
+  free(buffer);
+  return (true);
 }
